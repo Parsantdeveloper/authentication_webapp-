@@ -45,7 +45,10 @@ model Account {
   accessTokenExpiresAt DateTime? @db.Timestamptz(6)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
   User User @relation(fields: [userId], references: [id])
+    @@unique([userId, provider])
+
 }
 
 model Session {

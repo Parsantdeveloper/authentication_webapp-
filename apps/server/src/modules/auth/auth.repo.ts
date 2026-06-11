@@ -59,28 +59,7 @@ export class AuthRepository {
             }
         }
         
-     async getSession(refreshToken: string, logger: Logger) {
-        try {
-            const session = await prisma.session.findUnique({
-                where:{
-                    token:refreshToken
-                },
-                select:{
-                    User:{
-                        select:{
-                            id:true ,
-                            name:true,
-                            email:true
-                        }
-                    }
-                }
-            })
-            return session;
-        } catch (error) {
-            logger.error(error, "Error fetching session");
-            throw error;
-        }
-     }
+    
 
       async checkUserExistsByEmail(email:string ){
           return await prisma.user.findUnique({
@@ -89,6 +68,79 @@ export class AuthRepository {
             }
           })
       }
+
+      async logoutFromAllDevices(userId:string, logger: Logger) {
+        try{
+            let user=await prisma.session.deleteMany({
+                where:{
+                    userId:userId
+                }
+            })
+
+            return user;
+        }catch(error){
+            logger.error(error, "Error logging out user from all devices");
+            throw error;
+        }
+      }
+
+      async getAccount(userId:string , provider:string){
+        return await prisma.account.findUnique({
+            where:{  
+                userId_provider:{
+                    userId:userId,
+                    provider:provider
+                }
+            }
+        })
+      }
+
+      async getSession(sessionId:string, logger: Logger){
+        try{
+            let session=await prisma.session.findUnique({
+                where:{
+                    id:sessionId
+                },
+                select:{
+                    id:true , 
+                    userId:true,
+                    ipAddress:true,
+                    device:true,
+                    location:true,
+                    user_agent:true,
+                    expiresAt:true
+                }
+               
+            })
+            return session;
+        }catch(error){
+            logger.error(error, "Error fetching session with ID: %s", sessionId);
+            throw error;
+        }
+      }
+    
+      async getSessionByRefreshToken(refreshToken:string, logger: Logger){
+        try{
+            let session=await prisma.session.findFirst({
+                where:{
+                    token:refreshToken}})
+
+                 return session;   
+
+                }catch(error){
+                    logger.error(error, "Error fetching session with refresh token");
+                    throw error;
+                }
+      }
+
+      async getUserById(userId:string){
+        return await prisma.user.findUnique({
+            where:{
+                id:userId
+            }
+        })
+      }
+      
 }
 
 export default new AuthRepository();
