@@ -10,7 +10,8 @@ describe("Signup Tests",()=>{
         // Test implementation here
         const Input = {
             email:"test@example.com",
-            password:"password123"
+            password:"password123",
+            name:"Test User"
         }
         // Simulate a signup request and assert the response
         let req =  Request(app);
