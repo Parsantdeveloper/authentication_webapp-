@@ -4,7 +4,7 @@ import { hashPassword, hashRefreshToken , comparePassword } from "@repo/auth-uti
 import { generateRefreshToken,generateAccessToken} from "@repo/auth-utils"
 import {EmailLoginInput} from "./auth.schema.js"
 import type { Logger } from "../../config/logger.js";
-import { ConflictError , AppError , BadRequestError  } from "@repo/errors";
+import { ConflictError   } from "@repo/errors";
 import { Role } from "../../generated/prisma/browser.js";
 
   interface User {
