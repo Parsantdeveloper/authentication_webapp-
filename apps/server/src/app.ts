@@ -33,6 +33,12 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
 app.use("/api/auth", authRouter);
 
+ app.get("/",(req,res)=>{
+  res.send("Welcome to the API server!")
+ })
 
+ app.get("/health",(req,res)=>{
+  res.status(200).json({status:"ok"})
+ })
 app.use(errorHandler);
 export default app;

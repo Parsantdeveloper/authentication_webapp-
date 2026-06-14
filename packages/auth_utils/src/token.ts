@@ -1,16 +1,23 @@
 
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import {env} from "@repo/config";
+import { env } from "@repo/config";
 
 const ACCESS_TOKEN_SECRET = env.JWT_SECRET;
 
+interface JwtPayload {
+  id: string;
+  sessionId?: string;
+  email: string;
+  name: string;
+  role: string;
+}
 
 export const generateAccessToken = (
-  userId: string
+  payload: JwtPayload
 ): string => {
   return jwt.sign(
-    { userId },
+    payload,
     ACCESS_TOKEN_SECRET,
     {
       expiresIn: "15m",
@@ -21,10 +28,11 @@ export const generateAccessToken = (
 export const verifyAccessToken = (
   token: string
 ) => {
-  return jwt.verify(
-    token,
-    ACCESS_TOKEN_SECRET
-  );
+  try {
+    return jwt.verify(token, ACCESS_TOKEN_SECRET) as JwtPayload;
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
 };
 
 export const generateRefreshToken = (): string => {
