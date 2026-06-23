@@ -139,6 +139,13 @@ class AuthService {
             return { accessToken };
 
     }
+
+    async logoutFromDevice(sessionId:string,logger:Logger){
+        return await AuthRepository.logoutFromDevice(sessionId, logger);
+    }
+   
+    
+
 }
 
 

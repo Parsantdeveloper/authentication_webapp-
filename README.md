@@ -1,160 +1,75 @@
-# Turborepo starter
+1. Email + Password      ✅
 
-This Turborepo starter is maintained by the Turborepo core team.
+2. Refresh Tokens        ✅
 
-## Using this example
+3. Email Verification
 
-Run the following command:
+4. Password Reset
 
-```sh
-npx create-turbo@latest
-```
+5. TOTP Authenticator
 
-## What's inside?
+6. Recovery Codes
 
-This Turborepo includes the following packages/apps:
+7. Trusted Devices
 
-### Apps and Packages
+8. Magic Links
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+9. Google OAuth
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+10. GitHub OAuth
 
-### Utilities
+11. Step-up Authentication
 
-This Turborepo has some additional tools already setup for you:
+12. Session Dashboard
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+13. Passkeys (WebAuthn)
 
-### Build
+14. Device Fingerprinting
 
-To build all apps and packages, run the following command:
+15. Risk-based Authentication
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
 
-```sh
-cd my-turborepo
-turbo build
-```
+APIs I would build next
 
-Without global `turbo`, use your package manager:
+Order matters.
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
-```
+Phase 1
+POST /auth/signup
+POST /auth/login
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+POST /auth/refresh
+POST /auth/logout
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+GET  /auth/me
 
-```sh
-turbo build --filter=docs
-```
+You already have most of this.
 
-Without global `turbo`:
+Phase 2
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+POST /auth/email-verification/request
+POST /auth/email-verification/verify
 
-### Develop
+Phase 3
+POST /auth/password-reset/request
+POST /auth/password-reset/verify
+Phase 4
+POST /auth/magic-link/request
+GET  /auth/magic-link/verify
+Phase 5
+POST /2fa/setup
+POST /2fa/verify-setup
 
-To develop all apps and packages, run the following command:
+POST /2fa/login
+POST /2fa/disable
+Phase 6
+GET /oauth/google
+GET /oauth/google/callback
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+GET /oauth/github
+GET /oauth/github/callback
+Phase 7
+GET /sessions
 
-```sh
-cd my-turborepo
-turbo dev
-```
+DELETE /sessions/:id
 
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
-# authentication_webapp-
+DELETE /sessions

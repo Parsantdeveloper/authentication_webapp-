@@ -140,6 +140,23 @@ export class AuthRepository {
             }
         })
       }
+
+      async logoutFromDevice(sessionId:string,logger:Logger){
+         try{
+            let session = await prisma.session.delete({
+                where:{
+                    id:sessionId
+                }
+            })
+            logger.info("Session with ID: %s logged out successfully", sessionId);
+            return session;
+         }catch(error){
+            logger.error(error, "Error logging out session with ID: %s", sessionId);
+            throw error;
+                }
+            }
+         
+      
       
 }
 

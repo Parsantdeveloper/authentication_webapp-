@@ -118,3 +118,16 @@ export const refreshToken = async(req: Request, res: Response, next: NextFunctio
         next(error);
     }
 }
+
+export const logoutFromDevice = async(req: Request, res: Response, next: NextFunction) => {
+    try{
+        const sessionId = req.user.sessionId;
+        if(!sessionId){
+            return res.status(400).json({ success: false, message: "Session ID is missing" });
+        }
+        await AuthService.logoutFromDevice(sessionId, req.log);
+        res.clearCookie("accessToken").clearCookie("refreshToken").json({ success: true, message: "Logged out from current device" });
+    }catch(error){
+        next(error);
+    }
+}

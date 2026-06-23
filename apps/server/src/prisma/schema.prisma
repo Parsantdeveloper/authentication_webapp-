@@ -17,17 +17,32 @@ model User {
   name     String  
   phoneNumber String? @unique
   emailVerified Boolean @default(false)
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String?
   role  Role    @default(USER)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
   Account Account[]
   Session Session[]
+  RecoveryCode RecoveryCode[]
+  TrustedDevice TrustedDevice[]
+}
+
+enum VerificationType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  MAGIC_LINK
+  LOGIN_OTP
 }
 
 model Verification {
    id  String @id @default(uuid())
    identifier  String
    value   String 
+  tokenHash String
+
+   type VerificationType
+   usedAt DateTime?
    expiresAt DateTime
    createdAt DateTime @default(now()) @db.Timestamptz(6)
    updatedAt DateTime @updatedAt @db.Timestamptz(6)
@@ -38,6 +53,7 @@ model Account {
   userId String 
   provider String 
   password  String?
+  providerAccountId String?
   refreshToken String?
   accessToken String?
   scope String?
@@ -46,9 +62,9 @@ model Account {
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
-  User User @relation(fields: [userId], references: [id])
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
     @@unique([userId, provider])
-
+    @@unique([provider, providerAccountId])
 }
 
 model Session {
@@ -56,11 +72,37 @@ model Session {
   userId String 
   token String @unique  // refresh token 
   ipAddress String?
-  user_agent String?
+  userAgent String?
   device String?
   location String?
+  twoFactorVerifiedAt DateTime?
+
   expiresAt DateTime  @db.Timestamptz(6)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-  User User @relation(fields: [userId], references: [id])
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model RecoveryCode{
+  id String @id @default(uuid())
+  userId String 
+  code String 
+  used Boolean @default(false)
+  expiresAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TrustedDevice {
+  id String @id @default(uuid())
+  userId String 
+  fingerprint String 
+  trustedAt DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, refreshToken } from "./auth.controller.js";
+import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, refreshToken } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -390,5 +390,67 @@ router.get("/refresh-token", refreshToken);
  *           type: string
  *           format: date-time
  */
+
+
+  router.post("/logout",authMiddleware,logoutFromDevice);
+      /**
+       * @swagger
+       * /api/auth/logout:
+       *   post:
+       *     summary: Logout from current device
+       *     description: Invalidates the current session, logging the user out from the current device
+       *     tags:
+       *       - Authentication
+       *     security:
+       *       - cookieAuth: []
+       *       - bearerAuth: []
+       *     responses:
+       *       200:
+       *         description: Successfully logged out from current device
+       *         content:
+       *           application/json:
+       *             schema:
+       *               type: object
+       *               properties:
+       *                 success:
+       *                   type: boolean
+       *                   example: true
+       *                 message:
+       *                   type: string
+       *                   example: "Logged out from current device"
+       *         headers:
+       *           Set-Cookie:
+       *             schema:
+       *               type: string
+       *               example: "accessToken=; Path=/; HttpOnly; Secure; SameSite=Strict; refreshToken=; Path=/; HttpOnly; Secure; SameSite=Strict"
+       *       400:
+       *         description: Session ID is missing
+       *         content:
+       *           application/json:
+       *             schema:
+       *               type: object
+       *               properties:
+       *                 success:
+       *                   type: boolean
+       *                   example: false
+       *                 message:
+       *                   type: string
+       *                   example: "Session ID is missing"
+       *       401:
+       *         description: Unauthorized - No valid token provided
+       *       404:
+       *         description: Session not found
+       *         content:
+       *           application/json:
+       *             schema:
+       *               type: object
+       *               properties:
+       *                 success:
+       *                   type: boolean
+       *                   example: false
+       *                 message:
+       *                   type: string
+       *                   example: "Session not found" 
+       */
 
 export default router;
