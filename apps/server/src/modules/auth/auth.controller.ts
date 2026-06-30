@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
 import {  emailSignupSchema , emailLoginSchema } from "./auth.schema.js";
 import { logger } from "../../config/logger.js";
+import { success } from "zod";
+import { VerifyCode } from "./auth.type.js";
 export  async function emailSignup(req: Request, res: Response, next: NextFunction) {
     try {
         const input = emailSignupSchema.parse({
@@ -127,6 +129,43 @@ export const logoutFromDevice = async(req: Request, res: Response, next: NextFun
         }
         await AuthService.logoutFromDevice(sessionId, req.log);
         res.clearCookie("accessToken").clearCookie("refreshToken").json({ success: true, message: "Logged out from current device" });
+    }catch(error){
+        next(error);
+    }
+}
+
+export const sendVerificationEmail = async (req:Request , res:Response,next:NextFunction)=>{
+
+    try {
+        const email = req.user.email;
+        if(!email){
+            return res.status(400).json({success:false,message:"Email is missing"});
+        }
+
+       let verification= await AuthService.sendEmailVerification(email,req.log);
+
+       if(verification) return res.status(200).json({success:true,message:"Email sent successfully"});
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const verifyEmail = async(req:Request,res:Response,next:NextFunction)=>{
+    try{
+      const code = req.body.code;
+      const email = req.user.email;
+      if(!code || !email){
+        return res.status(400).json({success:false,message:"Code or email is missing"});
+      }
+      const input:VerifyCode={
+        code:code,
+        identifier:email,
+        type:"EMAIL_VERIFICATION"
+      }
+      let verification= await AuthService.verifyEmail(input,req.log);
+      if(verification) return res.status(200).json({success:true,message:"Email verified successfully"});
+
     }catch(error){
         next(error);
     }

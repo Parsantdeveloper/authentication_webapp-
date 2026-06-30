@@ -3,7 +3,10 @@ import prisma from "../../config/prisma.js";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client.js'
 import {SessionCreateInput} from "./auth.schema.js";
 import {EmailAlreadyExistsError} from "@repo/errors";
+import { VerificationInput} from "./auth.type.js";
 import type { Logger } from "../../config/logger.js";
+import { VerificationType } from "../../generated/prisma/browser.js";
+
 
 export class AuthRepository {
 
@@ -107,7 +110,7 @@ export class AuthRepository {
                     ipAddress:true,
                     device:true,
                     location:true,
-                    user_agent:true,
+                    // user_agent:true,
                     expiresAt:true
                 }
                
@@ -155,9 +158,85 @@ export class AuthRepository {
             throw error;
                 }
             }
+
+    async createVerification( input: VerificationInput, logger: Logger){
+        try{
+            const verification = await prisma.verification.create({
+                data:{
+                    identifier:input.identifier,
+                    tokenHash:input.tokenHash,
+                    type:input.type,
+                    expiresAt:input.expiresAt
+                }
+            })
+            logger.info("Verification code created for email: %s", input.identifier);
+            return verification;
+        }catch(error){
+            logger.error(error, "Error creating verification code for email: %s", input.identifier);
+            throw error;
+        }
+    }  
+    
+    async getVerificationByIdentifier(identifier:string, type:VerificationType, logger:Logger){
+        try{
+            const verification = await prisma.verification.findFirst({
+                where:{
+                    identifier:identifier,
+                    usedAt:null,
+                    expiresAt:{
+                        gt:new Date()
+                    },
+                    type:type
+                }
+            })
+            if(!verification){
+                logger.warn("No verification code found for identifier: %s", identifier);
+            }else{
+                logger.info("Verification code retrieved for identifier: %s", identifier);
+            }
+            return verification;
+        }catch(error){
+            logger.error(error, "Error retrieving verification code for identifier: %s", identifier);
+            throw error;
+        }
+    }
          
-      
-      
+    async markVerificationAsUsed(verificationId:string, logger:Logger){
+        try{
+            const verification = await prisma.verification.update({
+                where:{
+                    id:verificationId
+                },
+                data:{
+                    usedAt:new Date()
+                }
+            })
+            logger.info("Verification code with ID: %s marked as used", verificationId);
+            return verification;
+        }catch(error){
+            logger.error(error, "Error marking verification code with ID: %s as used", verificationId);
+            throw error;
+        }
+    }
+    
+    async verifyEmail(email:string,logger:Logger){
+
+        try{
+          const user = await prisma.user.update({
+            where:{
+                email:email
+            },
+            data:{
+                emailVerified:true
+            }
+          })
+          return user;
+        }catch(error){
+            logger.error(error, "Error verifying email for user: %s", email);
+            throw error;
+        }
+
+    }
 }
 
 export default new AuthRepository();

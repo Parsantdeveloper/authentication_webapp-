@@ -7,6 +7,8 @@ PORT: z.string(),
 DATABASE_URL: z.string().url(),
 LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 JWT_SECRET: z.string(),
+REDIS_URL: z.string().url(),
+RESEND_API_KEY: z.string(),
 });
 
 

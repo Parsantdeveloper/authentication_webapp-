@@ -38,14 +38,14 @@ enum VerificationType {
 model Verification {
    id  String @id @default(uuid())
    identifier  String
-   value   String 
-  tokenHash String
-
+   tokenHash String
    type VerificationType
    usedAt DateTime?
    expiresAt DateTime
    createdAt DateTime @default(now()) @db.Timestamptz(6)
    updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+   @@index([identifier, type])
 }
 
 model Account {

@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, refreshToken } from "./auth.controller.js";
+import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, refreshToken,sendVerificationEmail, verifyEmail } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -452,5 +452,11 @@ router.get("/refresh-token", refreshToken);
        *                   type: string
        *                   example: "Session not found" 
        */
+
+      // this route is for sending the verification code to the user's email
+      router.get("/send-email-verification",authMiddleware, sendVerificationEmail);
+
+      // this route is for verifying the email with the code sent to the user's email
+      router.post("/verify-email",authMiddleware, verifyEmail);
 
 export default router;

@@ -1,10 +1,12 @@
 import { EmailSignupInput } from "./auth.schema.js";
 import AuthRepository from "./auth.repo.js";
-import { hashPassword, hashRefreshToken , comparePassword } from "@repo/auth-utils"
+import { hashPassword, hashRefreshToken , comparePassword ,generateOTP } from "@repo/auth-utils"
 import { generateRefreshToken,generateAccessToken} from "@repo/auth-utils"
 import {EmailLoginInput} from "./auth.schema.js"
+import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError   } from "@repo/errors";
+import { VerifyCode } from "./auth.type.js";
 import { Role } from "../../generated/prisma/browser.js";
 
   interface User {
@@ -142,6 +144,50 @@ class AuthService {
 
     async logoutFromDevice(sessionId:string,logger:Logger){
         return await AuthRepository.logoutFromDevice(sessionId, logger);
+    }
+
+    async sendEmailVerification(email:string,logger:Logger){
+         const code =  generateOTP(6);
+         const hashToken = await hashPassword(code);
+         const verification_exist = await AuthRepository.getVerificationByIdentifier(email, "EMAIL_VERIFICATION", logger);
+            if(verification_exist){
+                logger.info("Existing verification code found for email: %s", email);
+               throw new ConflictError("Verification code already sent. Please check your email. or wait for the previous code to expire.");
+            }
+         const verification = await AuthRepository.createVerification({
+            identifier:email,
+            tokenHash:hashToken,
+            type:"EMAIL_VERIFICATION",
+            expiresAt:new Date(Date.now() + 1 * 60 * 1000)
+         },logger)
+          if(verification){
+           await emailQueue.add("email_verification", {
+           type: "email_verification",
+           to: email,
+           name: email,
+           otp:code, // raw OTP goes to email only, never stored
+           });
+
+        logger.info(`Email queued successfully, email:${email}`);
+
+   return verification;
+
+        }
+
+    }
+
+
+    async verifyEmail(input: VerifyCode, logger: Logger) {
+
+        const verification = await AuthRepository.getVerificationByIdentifier(input.identifier , input.type,logger);
+        const isValid= await comparePassword(input.code, verification?.tokenHash ?? "");
+        if(!verification || !isValid){
+            logger.warn("Invalid verification attempt for identifier: %s", input.identifier);
+            throw new ConflictError("Invalid verification code");
+        }
+        const user = await AuthRepository.verifyEmail(input.identifier, logger);
+        await AuthRepository.markVerificationAsUsed(verification.id, logger);
+        return user;
     }
    
     

@@ -54,7 +54,9 @@ export const ModelName = {
   User: 'User',
   Verification: 'Verification',
   Account: 'Account',
-  Session: 'Session'
+  Session: 'Session',
+  RecoveryCode: 'RecoveryCode',
+  TrustedDevice: 'TrustedDevice'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -79,6 +81,8 @@ export const UserScalarFieldEnum = {
   name: 'name',
   phoneNumber: 'phoneNumber',
   emailVerified: 'emailVerified',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -90,7 +94,9 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const VerificationScalarFieldEnum = {
   id: 'id',
   identifier: 'identifier',
-  value: 'value',
+  tokenHash: 'tokenHash',
+  type: 'type',
+  usedAt: 'usedAt',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -104,6 +110,7 @@ export const AccountScalarFieldEnum = {
   userId: 'userId',
   provider: 'provider',
   password: 'password',
+  providerAccountId: 'providerAccountId',
   refreshToken: 'refreshToken',
   accessToken: 'accessToken',
   scope: 'scope',
@@ -121,15 +128,42 @@ export const SessionScalarFieldEnum = {
   userId: 'userId',
   token: 'token',
   ipAddress: 'ipAddress',
-  user_agent: 'user_agent',
+  userAgent: 'userAgent',
   device: 'device',
   location: 'location',
+  twoFactorVerifiedAt: 'twoFactorVerifiedAt',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const RecoveryCodeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  code: 'code',
+  used: 'used',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecoveryCodeScalarFieldEnum = (typeof RecoveryCodeScalarFieldEnum)[keyof typeof RecoveryCodeScalarFieldEnum]
+
+
+export const TrustedDeviceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fingerprint: 'fingerprint',
+  trustedAt: 'trustedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TrustedDeviceScalarFieldEnum = (typeof TrustedDeviceScalarFieldEnum)[keyof typeof TrustedDeviceScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -30,6 +30,8 @@ export type UserMinAggregateOutputType = {
   name: string | null
   phoneNumber: string | null
   emailVerified: boolean | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -41,6 +43,8 @@ export type UserMaxAggregateOutputType = {
   name: string | null
   phoneNumber: string | null
   emailVerified: boolean | null
+  twoFactorEnabled: boolean | null
+  twoFactorSecret: string | null
   role: $Enums.Role | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,6 +56,8 @@ export type UserCountAggregateOutputType = {
   name: number
   phoneNumber: number
   emailVerified: number
+  twoFactorEnabled: number
+  twoFactorSecret: number
   role: number
   createdAt: number
   updatedAt: number
@@ -65,6 +71,8 @@ export type UserMinAggregateInputType = {
   name?: true
   phoneNumber?: true
   emailVerified?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -76,6 +84,8 @@ export type UserMaxAggregateInputType = {
   name?: true
   phoneNumber?: true
   emailVerified?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -87,6 +97,8 @@ export type UserCountAggregateInputType = {
   name?: true
   phoneNumber?: true
   emailVerified?: true
+  twoFactorEnabled?: true
+  twoFactorSecret?: true
   role?: true
   createdAt?: true
   updatedAt?: true
@@ -171,6 +183,8 @@ export type UserGroupByOutputType = {
   name: string
   phoneNumber: string | null
   emailVerified: boolean
+  twoFactorEnabled: boolean
+  twoFactorSecret: string | null
   role: $Enums.Role
   createdAt: Date
   updatedAt: Date
@@ -203,11 +217,15 @@ export type UserWhereInput = {
   name?: Prisma.StringFilter<"User"> | string
   phoneNumber?: Prisma.StringNullableFilter<"User"> | string | null
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Account?: Prisma.AccountListRelationFilter
   Session?: Prisma.SessionListRelationFilter
+  RecoveryCode?: Prisma.RecoveryCodeListRelationFilter
+  TrustedDevice?: Prisma.TrustedDeviceListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -216,11 +234,15 @@ export type UserOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   Account?: Prisma.AccountOrderByRelationAggregateInput
   Session?: Prisma.SessionOrderByRelationAggregateInput
+  RecoveryCode?: Prisma.RecoveryCodeOrderByRelationAggregateInput
+  TrustedDevice?: Prisma.TrustedDeviceOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -232,11 +254,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   name?: Prisma.StringFilter<"User"> | string
   emailVerified?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorEnabled?: Prisma.BoolFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   Account?: Prisma.AccountListRelationFilter
   Session?: Prisma.SessionListRelationFilter
+  RecoveryCode?: Prisma.RecoveryCodeListRelationFilter
+  TrustedDevice?: Prisma.TrustedDeviceListRelationFilter
 }, "id" | "email" | "phoneNumber">
 
 export type UserOrderByWithAggregationInput = {
@@ -245,6 +271,8 @@ export type UserOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -262,6 +290,8 @@ export type UserScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   emailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  twoFactorEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  twoFactorSecret?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -273,11 +303,15 @@ export type UserCreateInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Account?: Prisma.AccountCreateNestedManyWithoutUserInput
   Session?: Prisma.SessionCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -286,11 +320,15 @@ export type UserUncheckedCreateInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Account?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   Session?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -299,11 +337,15 @@ export type UserUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Account?: Prisma.AccountUpdateManyWithoutUserNestedInput
   Session?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -312,11 +354,15 @@ export type UserUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Account?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   Session?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -325,6 +371,8 @@ export type UserCreateManyInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -336,6 +384,8 @@ export type UserUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +397,8 @@ export type UserUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,6 +410,8 @@ export type UserCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -369,6 +423,8 @@ export type UserMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -380,6 +436,8 @@ export type UserMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
+  twoFactorEnabled?: Prisma.SortOrder
+  twoFactorSecret?: Prisma.SortOrder
   role?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -438,16 +496,48 @@ export type UserUpdateOneRequiredWithoutSessionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionInput, Prisma.UserUpdateWithoutSessionInput>, Prisma.UserUncheckedUpdateWithoutSessionInput>
 }
 
+export type UserCreateNestedOneWithoutRecoveryCodeInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodeInput, Prisma.UserUncheckedCreateWithoutRecoveryCodeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRecoveryCodeInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRecoveryCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodeInput, Prisma.UserUncheckedCreateWithoutRecoveryCodeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRecoveryCodeInput
+  upsert?: Prisma.UserUpsertWithoutRecoveryCodeInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRecoveryCodeInput, Prisma.UserUpdateWithoutRecoveryCodeInput>, Prisma.UserUncheckedUpdateWithoutRecoveryCodeInput>
+}
+
+export type UserCreateNestedOneWithoutTrustedDeviceInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTrustedDeviceInput, Prisma.UserUncheckedCreateWithoutTrustedDeviceInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTrustedDeviceInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTrustedDeviceNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTrustedDeviceInput, Prisma.UserUncheckedCreateWithoutTrustedDeviceInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTrustedDeviceInput
+  upsert?: Prisma.UserUpsertWithoutTrustedDeviceInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTrustedDeviceInput, Prisma.UserUpdateWithoutTrustedDeviceInput>, Prisma.UserUncheckedUpdateWithoutTrustedDeviceInput>
+}
+
 export type UserCreateWithoutAccountInput = {
   id?: string
   email: string
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Session?: Prisma.SessionCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountInput = {
@@ -456,10 +546,14 @@ export type UserUncheckedCreateWithoutAccountInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Session?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountInput = {
@@ -484,10 +578,14 @@ export type UserUpdateWithoutAccountInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Session?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountInput = {
@@ -496,10 +594,14 @@ export type UserUncheckedUpdateWithoutAccountInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Session?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionInput = {
@@ -508,10 +610,14 @@ export type UserCreateWithoutSessionInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Account?: Prisma.AccountCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionInput = {
@@ -520,10 +626,14 @@ export type UserUncheckedCreateWithoutSessionInput = {
   name: string
   phoneNumber?: string | null
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
   Account?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionInput = {
@@ -548,10 +658,14 @@ export type UserUpdateWithoutSessionInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Account?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionInput = {
@@ -560,10 +674,174 @@ export type UserUncheckedUpdateWithoutSessionInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Account?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutRecoveryCodeInput = {
+  id?: string
+  email: string
+  name: string
+  phoneNumber?: string | null
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Account?: Prisma.AccountCreateNestedManyWithoutUserInput
+  Session?: Prisma.SessionCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutRecoveryCodeInput = {
+  id?: string
+  email: string
+  name: string
+  phoneNumber?: string | null
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Account?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  Session?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutRecoveryCodeInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodeInput, Prisma.UserUncheckedCreateWithoutRecoveryCodeInput>
+}
+
+export type UserUpsertWithoutRecoveryCodeInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRecoveryCodeInput, Prisma.UserUncheckedUpdateWithoutRecoveryCodeInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodeInput, Prisma.UserUncheckedCreateWithoutRecoveryCodeInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRecoveryCodeInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRecoveryCodeInput, Prisma.UserUncheckedUpdateWithoutRecoveryCodeInput>
+}
+
+export type UserUpdateWithoutRecoveryCodeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Account?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  Session?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRecoveryCodeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Account?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  Session?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  TrustedDevice?: Prisma.TrustedDeviceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTrustedDeviceInput = {
+  id?: string
+  email: string
+  name: string
+  phoneNumber?: string | null
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Account?: Prisma.AccountCreateNestedManyWithoutUserInput
+  Session?: Prisma.SessionCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTrustedDeviceInput = {
+  id?: string
+  email: string
+  name: string
+  phoneNumber?: string | null
+  emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: string | null
+  role?: $Enums.Role
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  Account?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  Session?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTrustedDeviceInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTrustedDeviceInput, Prisma.UserUncheckedCreateWithoutTrustedDeviceInput>
+}
+
+export type UserUpsertWithoutTrustedDeviceInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTrustedDeviceInput, Prisma.UserUncheckedUpdateWithoutTrustedDeviceInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTrustedDeviceInput, Prisma.UserUncheckedCreateWithoutTrustedDeviceInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTrustedDeviceInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTrustedDeviceInput, Prisma.UserUncheckedUpdateWithoutTrustedDeviceInput>
+}
+
+export type UserUpdateWithoutTrustedDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Account?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  Session?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTrustedDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  twoFactorSecret?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Account?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  Session?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  RecoveryCode?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -574,11 +852,15 @@ export type UserUncheckedUpdateWithoutSessionInput = {
 export type UserCountOutputType = {
   Account: number
   Session: number
+  RecoveryCode: number
+  TrustedDevice: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Account?: boolean | UserCountOutputTypeCountAccountArgs
   Session?: boolean | UserCountOutputTypeCountSessionArgs
+  RecoveryCode?: boolean | UserCountOutputTypeCountRecoveryCodeArgs
+  TrustedDevice?: boolean | UserCountOutputTypeCountTrustedDeviceArgs
 }
 
 /**
@@ -605,6 +887,20 @@ export type UserCountOutputTypeCountSessionArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.SessionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRecoveryCodeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecoveryCodeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTrustedDeviceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TrustedDeviceWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -612,11 +908,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   phoneNumber?: boolean
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   Account?: boolean | Prisma.User$AccountArgs<ExtArgs>
   Session?: boolean | Prisma.User$SessionArgs<ExtArgs>
+  RecoveryCode?: boolean | Prisma.User$RecoveryCodeArgs<ExtArgs>
+  TrustedDevice?: boolean | Prisma.User$TrustedDeviceArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -626,6 +926,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   phoneNumber?: boolean
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -637,6 +939,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   phoneNumber?: boolean
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -648,15 +952,19 @@ export type UserSelectScalar = {
   name?: boolean
   phoneNumber?: boolean
   emailVerified?: boolean
+  twoFactorEnabled?: boolean
+  twoFactorSecret?: boolean
   role?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "phoneNumber" | "emailVerified" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "phoneNumber" | "emailVerified" | "twoFactorEnabled" | "twoFactorSecret" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Account?: boolean | Prisma.User$AccountArgs<ExtArgs>
   Session?: boolean | Prisma.User$SessionArgs<ExtArgs>
+  RecoveryCode?: boolean | Prisma.User$RecoveryCodeArgs<ExtArgs>
+  TrustedDevice?: boolean | Prisma.User$TrustedDeviceArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -667,6 +975,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     Account: Prisma.$AccountPayload<ExtArgs>[]
     Session: Prisma.$SessionPayload<ExtArgs>[]
+    RecoveryCode: Prisma.$RecoveryCodePayload<ExtArgs>[]
+    TrustedDevice: Prisma.$TrustedDevicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -674,6 +984,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     phoneNumber: string | null
     emailVerified: boolean
+    twoFactorEnabled: boolean
+    twoFactorSecret: string | null
     role: $Enums.Role
     createdAt: Date
     updatedAt: Date
@@ -1073,6 +1385,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   Account<T extends Prisma.User$AccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$AccountArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Session<T extends Prisma.User$SessionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$SessionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  RecoveryCode<T extends Prisma.User$RecoveryCodeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$RecoveryCodeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecoveryCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  TrustedDevice<T extends Prisma.User$TrustedDeviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$TrustedDeviceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TrustedDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1107,6 +1421,8 @@ export interface UserFieldRefs {
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"User", 'String'>
   readonly emailVerified: Prisma.FieldRef<"User", 'Boolean'>
+  readonly twoFactorEnabled: Prisma.FieldRef<"User", 'Boolean'>
+  readonly twoFactorSecret: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -1548,6 +1864,54 @@ export type User$SessionArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.SessionScalarFieldEnum | Prisma.SessionScalarFieldEnum[]
+}
+
+/**
+ * User.RecoveryCode
+ */
+export type User$RecoveryCodeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecoveryCode
+   */
+  select?: Prisma.RecoveryCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecoveryCode
+   */
+  omit?: Prisma.RecoveryCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecoveryCodeInclude<ExtArgs> | null
+  where?: Prisma.RecoveryCodeWhereInput
+  orderBy?: Prisma.RecoveryCodeOrderByWithRelationInput | Prisma.RecoveryCodeOrderByWithRelationInput[]
+  cursor?: Prisma.RecoveryCodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecoveryCodeScalarFieldEnum | Prisma.RecoveryCodeScalarFieldEnum[]
+}
+
+/**
+ * User.TrustedDevice
+ */
+export type User$TrustedDeviceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TrustedDevice
+   */
+  select?: Prisma.TrustedDeviceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TrustedDevice
+   */
+  omit?: Prisma.TrustedDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TrustedDeviceInclude<ExtArgs> | null
+  where?: Prisma.TrustedDeviceWhereInput
+  orderBy?: Prisma.TrustedDeviceOrderByWithRelationInput | Prisma.TrustedDeviceOrderByWithRelationInput[]
+  cursor?: Prisma.TrustedDeviceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TrustedDeviceScalarFieldEnum | Prisma.TrustedDeviceScalarFieldEnum[]
 }
 
 /**
