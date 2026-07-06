@@ -96,6 +96,7 @@ export const VerificationScalarFieldEnum = {
   identifier: 'identifier',
   tokenHash: 'tokenHash',
   type: 'type',
+  attempts: 'attempts',
   usedAt: 'usedAt',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',

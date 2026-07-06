@@ -20,8 +20,18 @@ export type VerificationModel = runtime.Types.Result.DefaultSelection<Prisma.$Ve
 
 export type AggregateVerification = {
   _count: VerificationCountAggregateOutputType | null
+  _avg: VerificationAvgAggregateOutputType | null
+  _sum: VerificationSumAggregateOutputType | null
   _min: VerificationMinAggregateOutputType | null
   _max: VerificationMaxAggregateOutputType | null
+}
+
+export type VerificationAvgAggregateOutputType = {
+  attempts: number | null
+}
+
+export type VerificationSumAggregateOutputType = {
+  attempts: number | null
 }
 
 export type VerificationMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type VerificationMinAggregateOutputType = {
   identifier: string | null
   tokenHash: string | null
   type: $Enums.VerificationType | null
+  attempts: number | null
   usedAt: Date | null
   expiresAt: Date | null
   createdAt: Date | null
@@ -40,6 +51,7 @@ export type VerificationMaxAggregateOutputType = {
   identifier: string | null
   tokenHash: string | null
   type: $Enums.VerificationType | null
+  attempts: number | null
   usedAt: Date | null
   expiresAt: Date | null
   createdAt: Date | null
@@ -51,6 +63,7 @@ export type VerificationCountAggregateOutputType = {
   identifier: number
   tokenHash: number
   type: number
+  attempts: number
   usedAt: number
   expiresAt: number
   createdAt: number
@@ -59,11 +72,20 @@ export type VerificationCountAggregateOutputType = {
 }
 
 
+export type VerificationAvgAggregateInputType = {
+  attempts?: true
+}
+
+export type VerificationSumAggregateInputType = {
+  attempts?: true
+}
+
 export type VerificationMinAggregateInputType = {
   id?: true
   identifier?: true
   tokenHash?: true
   type?: true
+  attempts?: true
   usedAt?: true
   expiresAt?: true
   createdAt?: true
@@ -75,6 +97,7 @@ export type VerificationMaxAggregateInputType = {
   identifier?: true
   tokenHash?: true
   type?: true
+  attempts?: true
   usedAt?: true
   expiresAt?: true
   createdAt?: true
@@ -86,6 +109,7 @@ export type VerificationCountAggregateInputType = {
   identifier?: true
   tokenHash?: true
   type?: true
+  attempts?: true
   usedAt?: true
   expiresAt?: true
   createdAt?: true
@@ -131,6 +155,18 @@ export type VerificationAggregateArgs<ExtArgs extends runtime.Types.Extensions.I
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: VerificationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: VerificationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: VerificationMinAggregateInputType
@@ -161,6 +197,8 @@ export type VerificationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   _count?: VerificationCountAggregateInputType | true
+  _avg?: VerificationAvgAggregateInputType
+  _sum?: VerificationSumAggregateInputType
   _min?: VerificationMinAggregateInputType
   _max?: VerificationMaxAggregateInputType
 }
@@ -170,11 +208,14 @@ export type VerificationGroupByOutputType = {
   identifier: string
   tokenHash: string
   type: $Enums.VerificationType
+  attempts: number
   usedAt: Date | null
   expiresAt: Date
   createdAt: Date
   updatedAt: Date
   _count: VerificationCountAggregateOutputType | null
+  _avg: VerificationAvgAggregateOutputType | null
+  _sum: VerificationSumAggregateOutputType | null
   _min: VerificationMinAggregateOutputType | null
   _max: VerificationMaxAggregateOutputType | null
 }
@@ -202,6 +243,7 @@ export type VerificationWhereInput = {
   identifier?: Prisma.StringFilter<"Verification"> | string
   tokenHash?: Prisma.StringFilter<"Verification"> | string
   type?: Prisma.EnumVerificationTypeFilter<"Verification"> | $Enums.VerificationType
+  attempts?: Prisma.IntFilter<"Verification"> | number
   usedAt?: Prisma.DateTimeNullableFilter<"Verification"> | Date | string | null
   expiresAt?: Prisma.DateTimeFilter<"Verification"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Verification"> | Date | string
@@ -213,6 +255,7 @@ export type VerificationOrderByWithRelationInput = {
   identifier?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   usedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -227,6 +270,7 @@ export type VerificationWhereUniqueInput = Prisma.AtLeast<{
   identifier?: Prisma.StringFilter<"Verification"> | string
   tokenHash?: Prisma.StringFilter<"Verification"> | string
   type?: Prisma.EnumVerificationTypeFilter<"Verification"> | $Enums.VerificationType
+  attempts?: Prisma.IntFilter<"Verification"> | number
   usedAt?: Prisma.DateTimeNullableFilter<"Verification"> | Date | string | null
   expiresAt?: Prisma.DateTimeFilter<"Verification"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Verification"> | Date | string
@@ -238,13 +282,16 @@ export type VerificationOrderByWithAggregationInput = {
   identifier?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   usedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.VerificationCountOrderByAggregateInput
+  _avg?: Prisma.VerificationAvgOrderByAggregateInput
   _max?: Prisma.VerificationMaxOrderByAggregateInput
   _min?: Prisma.VerificationMinOrderByAggregateInput
+  _sum?: Prisma.VerificationSumOrderByAggregateInput
 }
 
 export type VerificationScalarWhereWithAggregatesInput = {
@@ -255,6 +302,7 @@ export type VerificationScalarWhereWithAggregatesInput = {
   identifier?: Prisma.StringWithAggregatesFilter<"Verification"> | string
   tokenHash?: Prisma.StringWithAggregatesFilter<"Verification"> | string
   type?: Prisma.EnumVerificationTypeWithAggregatesFilter<"Verification"> | $Enums.VerificationType
+  attempts?: Prisma.IntWithAggregatesFilter<"Verification"> | number
   usedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Verification"> | Date | string | null
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Verification"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Verification"> | Date | string
@@ -266,6 +314,7 @@ export type VerificationCreateInput = {
   identifier: string
   tokenHash: string
   type: $Enums.VerificationType
+  attempts?: number
   usedAt?: Date | string | null
   expiresAt: Date | string
   createdAt?: Date | string
@@ -277,6 +326,7 @@ export type VerificationUncheckedCreateInput = {
   identifier: string
   tokenHash: string
   type: $Enums.VerificationType
+  attempts?: number
   usedAt?: Date | string | null
   expiresAt: Date | string
   createdAt?: Date | string
@@ -288,6 +338,7 @@ export type VerificationUpdateInput = {
   identifier?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   usedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -299,6 +350,7 @@ export type VerificationUncheckedUpdateInput = {
   identifier?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   usedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -310,6 +362,7 @@ export type VerificationCreateManyInput = {
   identifier: string
   tokenHash: string
   type: $Enums.VerificationType
+  attempts?: number
   usedAt?: Date | string | null
   expiresAt: Date | string
   createdAt?: Date | string
@@ -321,6 +374,7 @@ export type VerificationUpdateManyMutationInput = {
   identifier?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   usedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -332,6 +386,7 @@ export type VerificationUncheckedUpdateManyInput = {
   identifier?: Prisma.StringFieldUpdateOperationsInput | string
   tokenHash?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.EnumVerificationTypeFieldUpdateOperationsInput | $Enums.VerificationType
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number
   usedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -343,10 +398,15 @@ export type VerificationCountOrderByAggregateInput = {
   identifier?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   usedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type VerificationAvgOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder
 }
 
 export type VerificationMaxOrderByAggregateInput = {
@@ -354,6 +414,7 @@ export type VerificationMaxOrderByAggregateInput = {
   identifier?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   usedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -365,14 +426,27 @@ export type VerificationMinOrderByAggregateInput = {
   identifier?: Prisma.SortOrder
   tokenHash?: Prisma.SortOrder
   type?: Prisma.SortOrder
+  attempts?: Prisma.SortOrder
   usedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type VerificationSumOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder
+}
+
 export type EnumVerificationTypeFieldUpdateOperationsInput = {
   set?: $Enums.VerificationType
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -386,6 +460,7 @@ export type VerificationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   identifier?: boolean
   tokenHash?: boolean
   type?: boolean
+  attempts?: boolean
   usedAt?: boolean
   expiresAt?: boolean
   createdAt?: boolean
@@ -397,6 +472,7 @@ export type VerificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   identifier?: boolean
   tokenHash?: boolean
   type?: boolean
+  attempts?: boolean
   usedAt?: boolean
   expiresAt?: boolean
   createdAt?: boolean
@@ -408,6 +484,7 @@ export type VerificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   identifier?: boolean
   tokenHash?: boolean
   type?: boolean
+  attempts?: boolean
   usedAt?: boolean
   expiresAt?: boolean
   createdAt?: boolean
@@ -419,13 +496,14 @@ export type VerificationSelectScalar = {
   identifier?: boolean
   tokenHash?: boolean
   type?: boolean
+  attempts?: boolean
   usedAt?: boolean
   expiresAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type VerificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identifier" | "tokenHash" | "type" | "usedAt" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["verification"]>
+export type VerificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "identifier" | "tokenHash" | "type" | "attempts" | "usedAt" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["verification"]>
 
 export type $VerificationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Verification"
@@ -435,6 +513,7 @@ export type $VerificationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     identifier: string
     tokenHash: string
     type: $Enums.VerificationType
+    attempts: number
     usedAt: Date | null
     expiresAt: Date
     createdAt: Date
@@ -866,6 +945,7 @@ export interface VerificationFieldRefs {
   readonly identifier: Prisma.FieldRef<"Verification", 'String'>
   readonly tokenHash: Prisma.FieldRef<"Verification", 'String'>
   readonly type: Prisma.FieldRef<"Verification", 'VerificationType'>
+  readonly attempts: Prisma.FieldRef<"Verification", 'Int'>
   readonly usedAt: Prisma.FieldRef<"Verification", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"Verification", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Verification", 'DateTime'>

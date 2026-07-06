@@ -38,3 +38,15 @@ export const verifyAccessToken = (
 export const generateRefreshToken = (): string => {
   return crypto.randomBytes(64).toString("hex");
 };
+
+export const generatePasswordResetToken =(payload:{userId:string,purpose:string}):string=>{
+   return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "10m" });
+}
+
+export const verifyPasswordResetToken = (token: string): {userId:string,purpose:string} => {
+  try {
+    return jwt.verify(token, ACCESS_TOKEN_SECRET) as {userId:string,purpose:string};
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
+}

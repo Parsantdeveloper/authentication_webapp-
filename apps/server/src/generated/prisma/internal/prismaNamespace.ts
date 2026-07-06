@@ -913,6 +913,7 @@ export const VerificationScalarFieldEnum = {
   identifier: 'identifier',
   tokenHash: 'tokenHash',
   type: 'type',
+  attempts: 'attempts',
   usedAt: 'usedAt',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',
@@ -1087,6 +1088,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**

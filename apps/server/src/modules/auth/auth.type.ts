@@ -11,6 +11,7 @@ export interface VerificationInput {
 
 
 export interface VerifyCode{
+   userId:string;
    code:string;
    identifier:string;
   type:VerificationType;
@@ -22,3 +23,4 @@ export interface changePasswordTypes{
    new_password:string
    user_id:string
 }
+

@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail } from "./auth.controller.js";
+import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -461,5 +461,11 @@ router.get("/refresh-token", refreshToken);
 
 
       router.post("/change-password",authMiddleware,changePassword);
+
+      router.post("/forgot-password",authMiddleware,sendPasswordResetEmail);
+
+      router.post("/verify-password-reset",authMiddleware,verifyPasswordResetToken);
+
+      router.post("/reset-password",authMiddleware,verifyPasswordResetTokenAndChangePassword);
 
 export default router;

@@ -1,7 +1,7 @@
 import { EmailSignupInput } from "./auth.schema.js";
 import AuthRepository from "./auth.repo.js";
 import { hashPassword, hashRefreshToken , comparePassword ,generateOTP } from "@repo/auth-utils"
-import { generateRefreshToken,generateAccessToken} from "@repo/auth-utils"
+import { generateRefreshToken,generateAccessToken,generatePasswordResetToken , verifyPasswordResetToken} from "@repo/auth-utils"
 import {EmailLoginInput} from "./auth.schema.js"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
@@ -178,7 +178,7 @@ class AuthService {
 
 
     async verifyEmail(input: VerifyCode, logger: Logger) {
-
+        
         const verification = await AuthRepository.getVerificationByIdentifier(input.identifier , input.type,logger);
         const isValid= await comparePassword(input.code, verification?.tokenHash ?? "");
         if(!verification || !isValid){
@@ -214,10 +214,72 @@ class AuthService {
     }
     
 
-     async forgetPassword(){
-        
+     async forgetPassword(email:string,logger:Logger){
+          const user = await AuthRepository.checkUserExistsByEmail(email);
+          if(!user){
+            throw new ConflictError("User doesnot exists");
+          }
+        const code =  generateOTP(6);
+        const hashToken = await hashPassword(code);
+
+        const verification_exist = await AuthRepository.getVerificationByIdentifier(email, "PASSWORD_RESET", logger);
+            if(verification_exist){
+                logger.info("Existing password reset code found for email: %s", email);
+               throw new ConflictError("Password reset code already sent. Please check your email. or wait for the previous code to expire.");
+            }
+         const verification = await AuthRepository.createVerification({
+            identifier:email,
+            tokenHash:hashToken,
+            type:"PASSWORD_RESET",
+            expiresAt:new Date(Date.now() + 1 * 60 * 1000)
+         },logger)
+          if(verification){
+
+          await emailQueue.add("password_reset", {
+            type: "password_reset",
+            to: email,
+            name: user.name,
+            otp:code, // raw OTP goes to email only, never stored
+            });
+
+          logger.info(`Password reset email queued successfully, email:${email}`);
+          return {message:"Password reset email sent successfully"};
      }
-    
+     }
+
+     async verifyPasswordResetToken(input: VerifyCode,logger:Logger){
+          
+            const verification = await AuthRepository.getVerificationByIdentifier(input.identifier , "PASSWORD_RESET",logger);
+        const isValid= await comparePassword(input.code, verification?.tokenHash ?? "");
+        if(!verification || !isValid){
+            logger.warn("Invalid verification attempt for identifier: %s", "PASSWORD_RESET");
+            throw new ConflictError("Invalid verification code");
+        }
+        
+        const reset_token = generatePasswordResetToken({userId:input.userId,purpose:"PASSWORD_RESET"});
+        await AuthRepository.markVerificationAsUsed(verification.id, logger);
+        return reset_token;
+    }
+
+    async changePasswordWithResetToken(token:string,new_password:string,logger:Logger){
+        const payload = verifyPasswordResetToken(token);
+        console.log("Payload from reset token: %o", payload);
+        if(!payload || payload.purpose !== "PASSWORD_RESET"){
+            throw new ConflictError("Invalid or expired password reset token");
+        }
+        const account = await AuthRepository.getAccount(payload.userId,"email");
+         if(!account){
+            throw new ConflictError("User doesnot exists");
+         }
+         let newHashedPassword = await hashPassword(new_password);
+          
+         try{
+            await AuthRepository.changePassword(account.id,newHashedPassword);
+            return {message:"Password changed successfully"};
+         }catch{
+            throw new ConflictError("Failed to change password");
+         }
+    }
 
 }
 

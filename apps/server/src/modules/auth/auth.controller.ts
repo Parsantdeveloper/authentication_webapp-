@@ -158,6 +158,7 @@ export const verifyEmail = async(req:Request,res:Response,next:NextFunction)=>{
         return res.status(400).json({success:false,message:"Code or email is missing"});
       }
       const input:VerifyCode={
+        userId:req.user.id,
         code:code,
         identifier:email,
         type:"EMAIL_VERIFICATION"
@@ -189,3 +190,68 @@ export const changePassword=async(req:Request,res:Response,next:NextFunction)=>{
         next(error);
     }
 }
+
+export const sendPasswordResetEmail = async (req:Request , res:Response,next:NextFunction)=>{
+    try{
+         const email = req.user.email;
+            if(!email){
+                return res.status(400).json({success:false,message:"Email is missing"});
+            }
+            const result = await AuthService.forgetPassword(email,req.log);
+            if(result) return res.status(200).json({success:true,message:"Password reset email sent successfully"});
+    }catch(error){
+        next(error);
+    }
+}
+
+export const verifyPasswordResetToken = async (req:Request , res:Response,next:NextFunction)=>{
+    try{
+      const token = req.body.token;
+      const email = req.user.email;
+      let input:VerifyCode={
+        userId:req.user.id,
+        code:token,
+        identifier:email,
+        type:"PASSWORD_RESET"
+      }
+      if(!token){
+        return res.status(400).json({success:false,message:"Token is missing"});
+      }
+      const result = await AuthService.verifyPasswordResetToken(input,req.log);
+      if(result){
+            res
+            .status(200)
+            .cookie("password_reset_token", result, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 15 * 60 * 1000,
+            })
+            .json({ success: true, password_reset_token: result });
+        }else{
+            res.status(401).json({ success: false, message: "Invalid OTP code " });
+        }
+
+    }catch(error){
+        next(error);
+    }
+}
+
+ export const verifyPasswordResetTokenAndChangePassword = async (req:Request , res:Response,next:NextFunction)=>{
+    try{
+        const token = req.cookies.password_reset_token;
+        if(!token){
+            return res.status(400).json({success:false,message:"Password reset token is missing"});
+        }
+        const newPassword = req.body.new_password;
+        const password = await AuthService.changePasswordWithResetToken(token,newPassword,req.log);
+        if(password){
+            res.clearCookie("password_reset_token");
+            res.status(200).json({success:true,message:"Password changed successfully"});
+        }else{
+            res.status(401).json({ success: false, message: "Invalid or expired token" });
+        }
+    }catch(error){
+        next(error);
+    }
+ }
