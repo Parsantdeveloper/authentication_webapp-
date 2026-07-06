@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, refreshToken,sendVerificationEmail, verifyEmail } from "./auth.controller.js";
+import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -458,5 +458,8 @@ router.get("/refresh-token", refreshToken);
 
       // this route is for verifying the email with the code sent to the user's email
       router.post("/verify-email",authMiddleware, verifyEmail);
+
+
+      router.post("/change-password",authMiddleware,changePassword);
 
 export default router;

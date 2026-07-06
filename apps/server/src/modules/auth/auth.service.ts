@@ -6,7 +6,7 @@ import {EmailLoginInput} from "./auth.schema.js"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError   } from "@repo/errors";
-import { VerifyCode } from "./auth.type.js";
+import { VerifyCode,changePasswordTypes } from "./auth.type.js";
 import { Role } from "../../generated/prisma/browser.js";
 
   interface User {
@@ -190,6 +190,33 @@ class AuthService {
         return user;
     }
    
+ 
+    async passwordChange(input:changePasswordTypes){
+      let account = await AuthRepository.getAccount(input.user_id,"email")
+      if(!account){
+        throw new ConflictError("User doesnot exists");
+      }
+       let isOldPasswordValid = await comparePassword(input.old_password,account.password ?? "");
+      if(!isOldPasswordValid){
+        throw new ConflictError("Old password is incorrect");
+      }
+       if(input.old_password === input.new_password){
+        throw new ConflictError("Old password and new password cannot be same.");
+       }
+     
+       let newHashedPassword = await hashPassword(input.new_password);
+       try{
+          await AuthRepository.changePassword(account.id,newHashedPassword);
+          return {message:"Password changed successfully"};
+       }catch(error){
+        throw new ConflictError("Failed to change password");
+       }
+    }
+    
+
+     async forgetPassword(){
+        
+     }
     
 
 }

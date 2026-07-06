@@ -1,9 +1,8 @@
 
 import { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
-import {  emailSignupSchema , emailLoginSchema } from "./auth.schema.js";
+import {  emailSignupSchema , emailLoginSchema , changePasswordInput } from "./auth.schema.js";
 import { logger } from "../../config/logger.js";
-import { success } from "zod";
 import { VerifyCode } from "./auth.type.js";
 export  async function emailSignup(req: Request, res: Response, next: NextFunction) {
     try {
@@ -165,6 +164,26 @@ export const verifyEmail = async(req:Request,res:Response,next:NextFunction)=>{
       }
       let verification= await AuthService.verifyEmail(input,req.log);
       if(verification) return res.status(200).json({success:true,message:"Email verified successfully"});
+
+    }catch(error){
+        next(error);
+    }
+}
+
+
+export const changePassword=async(req:Request,res:Response,next:NextFunction)=>{
+
+    try{
+      const user = req.user;
+        const input =changePasswordInput.parse(req.body);
+         const body = {
+            ...input,
+            user_id:req.user.id,
+             email:user.email
+        }
+        console.log("Change password request body: %o", body);
+        let result = await AuthService.passwordChange(body);
+        if(result) return res.status(200).json({success:true,message:"Password changed successfully"});
 
     }catch(error){
         next(error);

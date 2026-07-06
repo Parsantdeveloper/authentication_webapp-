@@ -15,3 +15,10 @@ export interface VerifyCode{
    identifier:string;
   type:VerificationType;
 }
+
+export interface changePasswordTypes{
+   email:string 
+   old_password:string
+   new_password:string
+   user_id:string
+}

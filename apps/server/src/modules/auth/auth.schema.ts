@@ -81,3 +81,12 @@ export const phoneLoginSchema = baseAuthSchema.extend({
 export type PhoneLoginInput = z.infer<typeof phoneLoginSchema>;
 
 
+export const verificationSchema = z.object({
+   code: z.string().length(6, "Verification code must be 6 characters"),
+}
+)
+
+export const changePasswordInput=z.object({
+    old_password:z.string(),
+    new_password:z.string().min(6,"password must be at least 6 characters")
+})

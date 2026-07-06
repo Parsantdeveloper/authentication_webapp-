@@ -1,7 +1,7 @@
 import type { AccessTokenPayload } from "@repo/auth-utils";
 
 export interface AccessTokenPayload {
-  id: string;
+   id: string;
   sessionId?: string;
   email: string;
   name: string;

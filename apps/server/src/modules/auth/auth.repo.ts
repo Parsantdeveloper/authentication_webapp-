@@ -6,7 +6,7 @@ import {EmailAlreadyExistsError} from "@repo/errors";
 import { VerificationInput} from "./auth.type.js";
 import type { Logger } from "../../config/logger.js";
 import { VerificationType } from "../../generated/prisma/browser.js";
-
+import { AppError } from "@repo/errors";
 
 export class AuthRepository {
 
@@ -237,6 +237,23 @@ export class AuthRepository {
         }
 
     }
+
+    async changePassword(id:string , password:string){
+         try{
+          const user = await prisma.account.update({
+            where:{
+               id
+            },
+            data:{
+                password
+            }
+          })
+          return user
+         }catch(error){
+            throw new AppError("Failed to change password for account ID: " + id, 500);
+         }
+    }
 }
+
 
 export default new AuthRepository();
