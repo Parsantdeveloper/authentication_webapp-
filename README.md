@@ -52,6 +52,8 @@ POST /auth/email-verification/verify
 Phase 3
 POST /auth/password-reset/request
 POST /auth/password-reset/verify
+
+
 Phase 4
 POST /auth/magic-link/request
 GET  /auth/magic-link/verify
@@ -67,6 +69,7 @@ GET /oauth/google/callback
 
 GET /oauth/github
 GET /oauth/github/callback
+
 Phase 7
 GET /sessions
 

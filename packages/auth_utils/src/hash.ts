@@ -14,6 +14,7 @@ export const hashPassword = async (password: string): Promise<string> => {
 
 export const comparePassword = async (password: string, hash: string): Promise<boolean> => {
   try {
+    console.log(bcrypt.compare(password,hash));
     return await bcrypt.compare(password, hash);
   } catch (error) {
     throw new AppError("Failed to compare password",500);
@@ -33,4 +34,12 @@ export const hashRefreshToken = (
     throw new AppError("Failed to hash refresh token",500);
   }
 };
+
+export function generateOTP(length: number = 6): string {
+  const digits = "0123456789";
+  const bytes = crypto.randomBytes(length);
+  return Array.from(bytes)
+    .map((byte) => digits[byte % 10])
+    .join("");
+}
 
