@@ -28,33 +28,13 @@ model User {
   TrustedDevice TrustedDevice[]
 }
 
-enum VerificationType {
-  EMAIL_VERIFICATION
-  PASSWORD_RESET
-  MAGIC_LINK
-  LOGIN_OTP
-}
-
-model Verification {
-   id  String @id @default(uuid())
-   identifier  String
-   tokenHash String
-   type VerificationType
-   attempts Int @default(0)
-   usedAt DateTime?
-   expiresAt DateTime
-   createdAt DateTime @default(now()) @db.Timestamptz(6)
-   updatedAt DateTime @updatedAt @db.Timestamptz(6)
-
-   @@index([identifier, type])
-}
 
 model Account {
   id String @id @default(uuid())
   userId String 
-  provider String 
+  provider String // "magic-link"
   password  String?
-  providerAccountId String?
+  providerAccountId String?  // "user@gmail.com"
   refreshToken String?
   accessToken String?
   scope String?
@@ -83,6 +63,28 @@ model Session {
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+enum VerificationType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  MAGIC_LINK
+  LOGIN_OTP
+}
+
+model Verification {
+   id  String @id @default(uuid())
+   identifier  String
+   tokenHash String
+   type VerificationType
+   attempts Int @default(0)
+   usedAt DateTime?
+   expiresAt DateTime
+   createdAt DateTime @default(now()) @db.Timestamptz(6)
+   updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+   @@index([identifier, type])
+}
+
 
 model RecoveryCode{
   id String @id @default(uuid())

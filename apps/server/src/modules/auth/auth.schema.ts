@@ -90,3 +90,7 @@ export const changePasswordInput=z.object({
     old_password:z.string(),
     new_password:z.string().min(6,"password must be at least 6 characters")
 })
+
+export const magicLinkSchema = baseAuthSchema.extend({
+  email: z.string().email("Invalid email format"),
+})

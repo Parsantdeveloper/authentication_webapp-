@@ -31,6 +31,16 @@ const EMAIL_TEMPLATES: Record<
       <p>This code expires in 1 minutes.</p>
     `,
   }),
+
+  magic_link:(data)=>({
+    subject:"Magic Link",
+    html:`
+      <p>Hi ${data.name},</p>
+      <p>Click the link below to login:</p>
+      <a href="${process.env.MAGIC_LINK_URL}?token=${data.otp}">Login</a>
+      <p>This link expires in 10 minutes.</p>
+    `
+  }),
 };
 
 async function processEmailJob(job:Job<EmailJobData>){

@@ -13,7 +13,13 @@ export type EmailJobData =
       to: string;
       name: string;
       otp: string;  
-    };
+    }
+   |{
+      type:"magic_link";
+      to:string;
+      name:string;
+      otp:string;
+   }
 
 const emailQueue = new Queue<EmailJobData>("email", {
   connection: redis,

@@ -57,6 +57,8 @@ POST /auth/password-reset/verify
 Phase 4
 POST /auth/magic-link/request
 GET  /auth/magic-link/verify
+
+
 Phase 5
 POST /2fa/setup
 POST /2fa/verify-setup

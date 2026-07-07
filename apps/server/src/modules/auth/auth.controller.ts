@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
-import {  emailSignupSchema , emailLoginSchema , changePasswordInput } from "./auth.schema.js";
+import {  emailSignupSchema , emailLoginSchema , changePasswordInput, magicLinkSchema } from "./auth.schema.js";
 import { logger } from "../../config/logger.js";
 import { VerifyCode } from "./auth.type.js";
 export  async function emailSignup(req: Request, res: Response, next: NextFunction) {
@@ -255,3 +255,17 @@ export const verifyPasswordResetToken = async (req:Request , res:Response,next:N
         next(error);
     }
  }
+
+ export const magicLinkRequest = async (req:Request , res:Response,next:NextFunction)=>{
+      try{
+        let email = magicLinkSchema.parse(req.body).email;
+        
+        const result = await AuthService.magicLinkRequest(email, req.log);
+        if(result) {
+            res.status(200).json({success:true,message:"Magic link email sent successfully"});
+        }
+      }catch(error){
+        next(error);
+      }
+ }
+ 
