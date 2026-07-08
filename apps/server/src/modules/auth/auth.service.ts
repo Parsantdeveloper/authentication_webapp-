@@ -1,7 +1,7 @@
 import { EmailSignupInput } from "./auth.schema.js";
 import AuthRepository from "./auth.repo.js";
-import { hashPassword, hashRefreshToken, comparePassword, generateOTP } from "@repo/auth-utils"
-import { generateRefreshToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken } from "@repo/auth-utils"
+import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
+import { generateToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken } from "@repo/auth-utils"
 import { EmailLoginInput } from "./auth.schema.js"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
@@ -31,8 +31,8 @@ interface SessionInput {
 class AuthService {
 
     private createSession = async (user: User, input: SessionInput, logger: Logger) => {
-        let token = generateRefreshToken();
-        let hashedRefreshToken = await hashRefreshToken(token);
+        let token = generateToken();
+        let hashedRefreshToken = hashToken(token);
 
         let session = await AuthRepository.createSession(
             {
@@ -64,7 +64,7 @@ class AuthService {
             logger.warn("Attempt to signup with existing email: %s", input.email);
             throw new ConflictError("Email already exists");
         }
-        let hashedPassword = await hashPassword(input.password);
+        let hashedPassword = await hashSecret(input.password);
         const user = await AuthRepository.createUserWithAccount(
             { email: input.email, name: input.name },
             { provider: input.provider ?? "email", password: hashedPassword },
@@ -93,7 +93,7 @@ class AuthService {
             throw new ConflictError("This account uses a different login method");
         }
 
-        const isPasswordValid = await comparePassword(input.password, account.password);
+        const isPasswordValid = await compareSecret(input.password, account.password);
         if (!isPasswordValid) {
             logger.warn("Invalid password for user ID: %s", user.id);
             throw new ConflictError("Invalid email or password");
@@ -115,7 +115,7 @@ class AuthService {
     }
 
     async refreshToken(refreshToken: string, logger: Logger) {
-        const hashedtoken = await hashRefreshToken(refreshToken);
+        const hashedtoken = hashToken(refreshToken);
         const session = await AuthRepository.getSessionByRefreshToken(hashedtoken, logger);
         if (!session) {
             logger.warn("Refresh token attempt with invalid session ID: %s", refreshToken);
@@ -148,7 +148,7 @@ class AuthService {
 
     async sendEmailVerification(email: string, logger: Logger) {
         const code = generateOTP(6);
-        const hashToken = await hashPassword(code);
+        const hashedCode = await hashSecret(code);
         const verification_exist = await AuthRepository.getVerificationByIdentifier(email, "EMAIL_VERIFICATION", logger);
         if (verification_exist) {
             logger.info("Existing verification code found for email: %s", email);
@@ -156,7 +156,7 @@ class AuthService {
         }
         const verification = await AuthRepository.createVerification({
             identifier: email,
-            tokenHash: hashToken,
+            tokenHash: hashedCode,
             type: "EMAIL_VERIFICATION",
             expiresAt: new Date(Date.now() + 1 * 60 * 1000)
         }, logger)
@@ -180,7 +180,7 @@ class AuthService {
     async verifyEmail(input: VerifyCode, logger: Logger) {
 
         const verification = await AuthRepository.getVerificationByIdentifier(input.identifier, input.type, logger);
-        const isValid = await comparePassword(input.code, verification?.tokenHash ?? "");
+        const isValid = await compareSecret(input.code, verification?.tokenHash ?? "");
         if (!verification || !isValid) {
             logger.warn("Invalid verification attempt for identifier: %s", input.identifier);
             throw new ConflictError("Invalid verification code");
@@ -196,7 +196,7 @@ class AuthService {
         if (!account) {
             throw new ConflictError("User doesnot exists");
         }
-        let isOldPasswordValid = await comparePassword(input.old_password, account.password ?? "");
+        let isOldPasswordValid = await compareSecret(input.old_password, account.password ?? "");
         if (!isOldPasswordValid) {
             throw new ConflictError("Old password is incorrect");
         }
@@ -204,7 +204,7 @@ class AuthService {
             throw new ConflictError("Old password and new password cannot be same.");
         }
 
-        let newHashedPassword = await hashPassword(input.new_password);
+        let newHashedPassword = await hashSecret(input.new_password);
         try {
             await AuthRepository.changePassword(account.id, newHashedPassword);
             return { message: "Password changed successfully" };
@@ -220,7 +220,7 @@ class AuthService {
             throw new ConflictError("User doesnot exists");
         }
         const code = generateOTP(6);
-        const hashToken = await hashPassword(code);
+        const hashedCode = await hashSecret(code);
 
         const verification_exist = await AuthRepository.getVerificationByIdentifier(email, "PASSWORD_RESET", logger);
         if (verification_exist) {
@@ -229,7 +229,7 @@ class AuthService {
         }
         const verification = await AuthRepository.createVerification({
             identifier: email,
-            tokenHash: hashToken,
+            tokenHash: hashedCode,
             type: "PASSWORD_RESET",
             expiresAt: new Date(Date.now() + 1 * 60 * 1000)
         }, logger)
@@ -250,9 +250,9 @@ class AuthService {
     async verifyPasswordResetToken(input: VerifyCode, logger: Logger) {
 
         const verification = await AuthRepository.getVerificationByIdentifier(input.identifier, "PASSWORD_RESET", logger);
-        const isValid = await comparePassword(input.code, verification?.tokenHash ?? "");
+        const isValid = await compareSecret(input.code, verification?.tokenHash ?? "");
         if (!verification || !isValid) {
-            logger.warn("Invalid verification attempt for identifier: %s", "PASSWORD_RESET");
+            logger.warn("Invalid verification attempt for identifier: %s", input.identifier);
             throw new ConflictError("Invalid verification code");
         }
 
@@ -263,7 +263,6 @@ class AuthService {
 
     async changePasswordWithResetToken(token: string, new_password: string, logger: Logger) {
         const payload = verifyPasswordResetToken(token);
-        console.log("Payload from reset token: %o", payload);
         if (!payload || payload.purpose !== "PASSWORD_RESET") {
             throw new ConflictError("Invalid or expired password reset token");
         }
@@ -271,7 +270,7 @@ class AuthService {
         if (!account) {
             throw new ConflictError("User doesnot exists");
         }
-        let newHashedPassword = await hashPassword(new_password);
+        let newHashedPassword = await hashSecret(new_password);
 
         try {
             await AuthRepository.changePassword(account.id, newHashedPassword);
@@ -282,8 +281,11 @@ class AuthService {
     }
 
     async magicLinkRequest(email: string, logger: Logger) {
-        const email_verification_token = generateRefreshToken();
-        const hashedToken = await hashRefreshToken(email_verification_token);
+        const token = generateToken();
+        // Deterministic hash - lets magicLinkLogin look this row up directly
+        // by re-hashing the token the user clicks through with, with no
+        // email/identifier available at that point.
+        const tokenHash = hashToken(token);
         const verification_exist = await AuthRepository.getVerificationByIdentifier(email, "MAGIC_LINK", logger);
         if (verification_exist) {
             logger.info("Existing magic link found for email: %s", email);
@@ -291,7 +293,7 @@ class AuthService {
         }
         const verification = await AuthRepository.createVerification({
             identifier: email,
-            tokenHash: hashedToken,
+            tokenHash: tokenHash,
             type: "MAGIC_LINK",
             expiresAt: new Date(Date.now() + 10 * 60 * 1000) // 10 minute expiration
         }, logger)
@@ -300,27 +302,64 @@ class AuthService {
             throw new AppError("Failed to create magic link verification", 500);
         }
 
-       try {
-    const job = await emailQueue.add("magic_link", {
-        type: "magic_link",
-        to: email,
-        name: email,
-        otp: email_verification_token, // raw token goes to email only, never stored
-    });
+        try {
+            const job = await emailQueue.add("magic_link", {
+                type: "magic_link",
+                to: email,
+                name: email,
+                otp: token, // raw token goes to email only, never stored
+            });
 
-    logger.info(`Queued email job ${job.id}`);
-    return { message: "Magic link email sent successfully" };
-} catch (err) {
-    logger.error(err);
-    throw new AppError("Failed to queue email", 500);
-}
+            logger.info(`Queued email job ${job.id}`);
+            return { message: "Magic link email sent successfully" };
+        } catch (err) {
+            logger.error(err);
+            throw new AppError("Failed to queue email", 500);
+        }
 
 
     }
 
+    async magicLinkLogin(token: string, sessionInput: SessionInput, logger: Logger) {
+        const tokenHash = hashToken(token);
+        const verification = await AuthRepository.getVerificationByHashedToken(tokenHash, "MAGIC_LINK", logger);
+        if (!verification) {
+            throw new ConflictError("Invalid or expired magic link");
+        }
+
+        let user = await AuthRepository.checkUserExistsByEmail(verification.identifier);
+
+        if (!user) {
+            // No user at all yet -> create user + magic_link account together
+            user = await AuthRepository.createUserWithAccount(
+                { email: verification.identifier, name: verification.identifier, emailVerified: true },
+                { provider: "magic_link", providerAccountId: verification.identifier },
+                logger
+            );
+            logger.info({ userId: user.id }, "user and magic_link account created");
+        } else {
+            // User exists (maybe signed up with email/password before) but
+            // may not have a magic_link account linked yet -> link it.
+            const account = await AuthRepository.getAccount(user.id, "magic_link");
+            if (!account) {
+                await AuthRepository.createAccount(
+                    { provider: "magic_link", providerAccountId: verification.identifier, userId: user.id },
+                    logger
+                );
+                logger.info({ userId: user.id }, "magic_link account linked to existing user");
+            }
+            // else: user + account both already exist, nothing to create -
+            // fall straight through to issuing a session below.
+        }
+
+        await AuthRepository.markVerificationAsUsed(verification.id, logger);
+
+        let { session, accessToken, refreshToken } = await this.createSession(user, sessionInput, logger);
+        return ({ session, accessToken, refreshToken });
+    }
+
 }
+    
 
 
 export default new AuthService()
-
-

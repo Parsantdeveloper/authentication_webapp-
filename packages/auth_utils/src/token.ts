@@ -1,4 +1,3 @@
-
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { env } from "@repo/config";
@@ -35,18 +34,24 @@ export const verifyAccessToken = (
   }
 };
 
-export const generateRefreshToken = (): string => {
+/**
+ * Generates a random opaque bearer token (64 bytes, hex-encoded).
+ * Used for refresh tokens AND magic link tokens - always paired with
+ * hashToken() from hash.utils for storage/lookup. Renamed from
+ * generateRefreshToken since it's no longer refresh-token-specific.
+ */
+export const generateToken = (): string => {
   return crypto.randomBytes(64).toString("hex");
 };
 
-export const generatePasswordResetToken =(payload:{userId:string,purpose:string}):string=>{
-   return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "10m" });
-}
+export const generatePasswordResetToken = (payload: { userId: string; purpose: string }): string => {
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: "10m" });
+};
 
-export const verifyPasswordResetToken = (token: string): {userId:string,purpose:string} => {
+export const verifyPasswordResetToken = (token: string): { userId: string; purpose: string } => {
   try {
-    return jwt.verify(token, ACCESS_TOKEN_SECRET) as {userId:string,purpose:string};
+    return jwt.verify(token, ACCESS_TOKEN_SECRET) as { userId: string; purpose: string };
   } catch (error) {
     throw new Error("Invalid or expired token");
   }
-}
+};

@@ -1,7 +1,7 @@
 
 import { z } from "zod";
 
-const baseAuthSchema = z.object({
+ export const baseAuthSchema = z.object({
 
   ipAddress: z
     .string()
@@ -94,3 +94,4 @@ export const changePasswordInput=z.object({
 export const magicLinkSchema = baseAuthSchema.extend({
   email: z.string().email("Invalid email format"),
 })
+

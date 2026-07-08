@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest } from "./auth.controller.js";
+import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -468,6 +468,8 @@ router.get("/refresh-token", refreshToken);
 
       router.post("/reset-password",authMiddleware,verifyPasswordResetTokenAndChangePassword);
 
-      router.post("/magic-link/request",authMiddleware,magicLinkRequest);
+      router.post("/magic-link/request",magicLinkRequest);
+
+      router.get("/magic-link/verify",magicLinkLogin);
 
 export default router;

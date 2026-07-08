@@ -8,42 +8,120 @@ import type { Logger } from "../../config/logger.js";
 import { VerificationType } from "../../generated/prisma/browser.js";
 import { AppError } from "@repo/errors";
 
+interface CreateUserData {
+  email: string;
+  name: string;
+  emailVerified?: boolean;
+}
+
+interface CreateAccountData {
+  provider: string;
+  providerAccountId?: string;
+  password?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  scope?: string;
+  accessTokenExpiresAt?: Date;
+  refreshTokenExpiresAt?: Date;
+}
+
 export class AuthRepository {
 
-     async createUserWithAccount(userData: { email: string; name: string }, accountData: { provider: string; password: string }, logger: Logger) {
-         try {
-           const user = await prisma.$transaction(async(tx)=>{
-             const newUser = await tx.user.create({
-                data:{
-                    email:userData.email,
-                    name:userData.name
+     async createUserWithAccount(
+  userData: CreateUserData,
+  accountData: CreateAccountData,
+  logger: Logger
+) {
+  try {
+    const user = await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email: userData.email,
+          name: userData.name,
+          emailVerified: userData.emailVerified ?? false,
+        },
+      });
 
-                }
-             })
-                logger.info({ userId: newUser.id }, "User created with ID: %s", newUser.id);
-                await tx.account.create({
-                    data:{
-                        userId:newUser.id,
-                        provider:accountData.provider,
-                        password:accountData.password
-                    }
-                })
-                return newUser
-           })
-           return user;
-         } catch (error) {
-            if(error instanceof PrismaClientKnownRequestError && error.code ==="P2002"){
-                if(Array.isArray(error.meta?.target) && error.meta.target.includes("email")){
-                    logger.warn("Attempt to create user with existing email: %s", userData.email);
-                    throw new EmailAlreadyExistsError();
-                }
-            }
-             logger.error(error, "Error creating user with account");
-             throw error;
-         }
-         
-        }
-       
+      logger.info(
+        { userId: newUser.id },
+        "User created with ID: %s",
+        newUser.id
+      );
+
+      await tx.account.create({
+        data: {
+          userId: newUser.id,
+          provider: accountData.provider,
+          providerAccountId: accountData.providerAccountId,
+          password: accountData.password,
+          accessToken: accountData.accessToken,
+          refreshToken: accountData.refreshToken,
+          scope: accountData.scope,
+          accessTokenExpiresAt: accountData.accessTokenExpiresAt,
+          refreshTokenExpiresAt: accountData.refreshTokenExpiresAt,
+        },
+      });
+
+      return newUser;
+    });
+
+    return user;
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      if (
+        Array.isArray(error.meta?.target) &&
+        error.meta.target.includes("email")
+      ) {
+        logger.warn(
+          "Attempt to create user with existing email: %s",
+          userData.email
+        );
+        throw new EmailAlreadyExistsError();
+      }
+    }
+
+    logger.error(error, "Error creating user with account");
+    throw error;
+  }
+}
+   async createAccount(input: CreateAccountData & { userId: string },logger: Logger) {
+  try {
+    const account = await prisma.account.create({
+      data: {
+        userId: input.userId,
+        provider: input.provider,
+        providerAccountId: input.providerAccountId,
+        password: input.password,
+        accessToken: input.accessToken,
+        refreshToken: input.refreshToken,
+        scope: input.scope,
+        accessTokenExpiresAt: input.accessTokenExpiresAt,
+        refreshTokenExpiresAt: input.refreshTokenExpiresAt,
+      },
+    });
+
+    return account;
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      logger.warn("Attempt to create account that already exists");
+      throw new AppError(
+        "Account already exists",
+        409,
+      );
+    }
+
+    throw error;
+  }
+}
+
+
+
         async createSession(sessionData: SessionCreateInput, logger: Logger) {
             try {
                 logger.info("Creating session for user ID: %s", sessionData.userId);
@@ -200,6 +278,33 @@ export class AuthRepository {
             throw error;
         }
     }
+    
+     async getVerificationByHashedToken(hashedToken:string, type:VerificationType, logger:Logger){
+        try{
+            const verification = await prisma.verification.findFirst({
+                where:{
+                    tokenHash:hashedToken,
+                    usedAt:null,
+                    expiresAt:{
+                        gt:new Date()
+                    },
+                    type:type
+                }
+            })
+            if(!verification){
+                logger.warn("No verification code found for hashed token: %s");
+            }else{
+                logger.info("Verification code retrieved for hashed token: %s");
+            }
+            return verification;
+        }catch(error){
+            logger.error(error, "Error retrieving verification code for hashed token: %s");
+            throw error;
+        }
+    }
+
+    
+
          
     async markVerificationAsUsed(verificationId:string, logger:Logger){
         try{

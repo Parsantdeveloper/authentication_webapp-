@@ -37,7 +37,7 @@ const EMAIL_TEMPLATES: Record<
     html:`
       <p>Hi ${data.name},</p>
       <p>Click the link below to login:</p>
-      <a href="${process.env.MAGIC_LINK_URL}?token=${data.otp}">Login</a>
+      <a href="${process.env.MAGIC_LINK_URL}/verify?token=${data.otp}">Login</a>
       <p>This link expires in 10 minutes.</p>
     `
   }),
