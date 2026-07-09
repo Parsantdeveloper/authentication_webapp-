@@ -2,9 +2,9 @@
 
 2. Refresh Tokens        ✅
 
-3. Email Verification
+3. Email Verification    ✅
 
-4. Password Reset
+4. Password Reset        ✅
 
 5. TOTP Authenticator
 
@@ -12,7 +12,7 @@
 
 7. Trusted Devices
 
-8. Magic Links
+8. Magic Links          ✅
 
 9. Google OAuth
 
@@ -62,9 +62,11 @@ GET  /auth/magic-link/verify
 Phase 5
 POST /2fa/setup
 POST /2fa/verify-setup
-
 POST /2fa/login
+=====================================done==================================================  
 POST /2fa/disable
+
+
 Phase 6
 GET /oauth/google
 GET /oauth/google/callback
@@ -78,3 +80,10 @@ GET /sessions
 DELETE /sessions/:id
 
 DELETE /sessions
+
+
+
+THINGS TO ADD 
+Implement redis for rate limiting . 
+
+ for 2fa verification for disabling .

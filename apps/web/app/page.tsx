@@ -21,82 +21,8 @@ const ThemeImage = (props: Props) => {
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
+      <div className="w-screen h-40 "></div>
+      <img src="data:image/png;base64,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" alt="" />
     </div>
   );
 }

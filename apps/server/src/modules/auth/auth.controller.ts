@@ -54,7 +54,9 @@ export async function emailLogin(req: Request, res: Response, next: NextFunction
     try {
         let input = emailLoginSchema.parse(req.body);
         const tokens = await AuthService.emailLogin(input, req.log);
-        if (tokens) {
+         
+
+        if (tokens.requiresTwoFactor===false) {
             res
                 .status(200)
                 .cookie("accessToken", tokens.accessToken, {
@@ -70,7 +72,10 @@ export async function emailLogin(req: Request, res: Response, next: NextFunction
                     maxAge: 30 * 24 * 60 * 60 * 1000,
                 })
                 .json({ success: true, session: tokens.session, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
-        }
+        }else{
+            res.status(200)
+            .json({ success: true, requiresTwoFactor: true, loginToken: tokens.loginToken, message: "Two-factor authentication is enabled. Please verify the 2FA token." });
+           } 
 
     } catch (error) {
         next(error);
@@ -333,6 +338,45 @@ export const verifyTwoFactorAuth = async (req: Request, res: Response, next: Nex
         }
 
     } catch (error) {
+        next(error);
+    }
+}
+
+export const verifyTwoFactorAuthLogin = async (req: Request, res: Response, next: NextFunction) => {
+
+    try{
+        
+        const {token} = totpVerifySchema.parse(req.body);
+        
+        const loginToken =req.body.loginToken;
+
+        const sessionInput = baseAuthSchema.parse({
+            ...req.body,
+        });
+        const tokens = await AuthService.verify2faLogin({loginToken, token}, sessionInput, req.log);
+         const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict" as const,
+        };
+        if (tokens) {
+           res
+            .status(201)
+            .cookie("accessToken", tokens.accessToken, {
+                ...cookieOptions,
+
+                maxAge: 15 * 60 * 1000,
+            })
+            .cookie("refreshToken", tokens.refreshToken, {
+                ...cookieOptions,
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            })
+            .json({ success: true, session: tokens.session, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
+          
+        } else {
+            res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
+        }
+    }catch(error){
         next(error);
     }
 }

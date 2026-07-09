@@ -1,7 +1,7 @@
 import { EmailSignupInput } from "./auth.schema.js";
 import AuthRepository from "./auth.repo.js";
 import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
-import { generateToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken } from "@repo/auth-utils"
+import { generateToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken ,generateLoginToken,verifyLoginToken } from "@repo/auth-utils"
 import { EmailLoginInput } from "./auth.schema.js"
 import { decryptSecret, encryptSecret, generateSecret, generateTOTP } from "../../libs/totp.auth.js"
 import emailQueue from "../../libs/email.subscriber.js"
@@ -102,8 +102,13 @@ class AuthService {
             throw new ConflictError("Invalid email or password");
         }
 
-        let { session, accessToken, refreshToken } = await this.createSession(user, input, logger);
-        return ({ session, accessToken, refreshToken });
+        if(user.twoFactorEnabled===false){
+            let { session, accessToken, refreshToken } = await this.createSession(user, input, logger);
+            return ({requiresTwoFactor: false, session, accessToken, refreshToken });
+        }
+
+        const loginToken = generateLoginToken({ userId: user.id, type: "2fa_login" });
+        return { requiresTwoFactor: true, loginToken , message: "Two-factor authentication is enabled. Please verify the 2FA token."};
 
     }
 
@@ -383,6 +388,8 @@ class AuthService {
         return { qrCode };
     }
 
+
+
     async verify2fa(input: { email: string; token: string }, logger: Logger) {
         const encryptedSecret = await AuthRepository.getTwoFactorSecret(input.email, logger);
         if (!encryptedSecret) {
@@ -400,6 +407,36 @@ class AuthService {
         }
         await AuthRepository.enableTwoFactorAuth(input.email, logger);
         return { message: "Two factor authentication verified successfully" };
+    }
+
+    async verify2faLogin(input:{loginToken:string,token:string},sessionInput:SessionInput,logger:Logger){
+
+        console.log("req comming in service")
+         const payload = verifyLoginToken(input.loginToken);
+         if(!payload || payload.type!=="2fa_login"){
+            throw new ConflictError("Invalid or expired login token");
+         }
+         console.log("payload",payload)
+         const user = await AuthRepository.getUserById(payload.userId);
+         console.log("user",user)
+         if (!user) {
+            throw new ConflictError("User not found");
+         }
+         console.log("user request in comming")
+        
+         const twoFactorSecret =decryptSecret(user.twoFactorSecret??"");
+            const totp = generateTOTP(user.email, twoFactorSecret);
+             const delta = totp.validate({
+            token: input.token,
+            window: 1,
+        });
+        
+        if (delta === null) {
+            throw new ConflictError("Invalid token");
+        }
+       let { session, accessToken, refreshToken } = await this.createSession(user, sessionInput, logger);
+            return ({requiresTwoFactor: false, session, accessToken, refreshToken });
+       
     }
 
 }

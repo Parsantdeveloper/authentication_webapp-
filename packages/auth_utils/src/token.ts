@@ -34,6 +34,17 @@ export const verifyAccessToken = (
   }
 };
 
+export const generateLoginToken=(input:{userId:string,type:"2fa_login"})=>{
+   return jwt.sign(input, ACCESS_TOKEN_SECRET, { expiresIn: "5m" });
+}
+
+export const verifyLoginToken=(token:string)=>{
+    try {
+        return jwt.verify(token, ACCESS_TOKEN_SECRET) as {userId:string,type:"2fa_login"};
+      } catch (error) {
+        throw new Error("Invalid or expired token");
+      }
+}
 /**
  * Generates a random opaque bearer token (64 bytes, hex-encoded).
  * Used for refresh tokens AND magic link tokens - always paired with
