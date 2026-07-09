@@ -3,11 +3,14 @@ import AuthRepository from "./auth.repo.js";
 import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
 import { generateToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken } from "@repo/auth-utils"
 import { EmailLoginInput } from "./auth.schema.js"
+import {generateSecret,generateTOTP} from "../../libs/totp.auth.js"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError, AppError } from "@repo/errors";
 import { VerifyCode, changePasswordTypes } from "./auth.type.js";
 import { Role } from "../../generated/prisma/browser.js";
+import QRCode from "qrcode";
+
 
 interface User {
     email: string;
@@ -357,6 +360,21 @@ class AuthService {
         let { session, accessToken, refreshToken } = await this.createSession(user, sessionInput, logger);
         return ({ session, accessToken, refreshToken });
     }
+
+
+    async setupTOTP(email:string, logger:Logger){
+      const secret = generateSecret();
+      const totp = generateTOTP(email, secret);
+      const twoFactorSecret = await AuthRepository.addTwoFactorSecret(email,secret.base32,logger);
+      if(!twoFactorSecret){
+        throw new ConflictError("Failed to setup two factor authentication");
+      }
+      const url = totp.toString();
+      const qrCode = await QRCode.toDataURL(url);
+        return {qrCode, secret:secret.base32};
+    }
+
+
 
 }
     

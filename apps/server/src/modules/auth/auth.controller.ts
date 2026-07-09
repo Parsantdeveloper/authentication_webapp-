@@ -270,7 +270,6 @@ export const magicLinkRequest = async (req: Request, res: Response, next: NextFu
 }
 
 export const magicLinkLogin = async (req: Request, res: Response, next: NextFunction) => {
-
     try {
         const input = baseAuthSchema.parse({
             ...req.body,
@@ -303,3 +302,21 @@ export const magicLinkLogin = async (req: Request, res: Response, next: NextFunc
         next(error);
     }
 }
+
+
+ export const setupTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
+
+    try{
+      const email = req.user.email;
+
+      const result = await AuthService.setupTOTP(email,req.log);
+      if(result){
+        res.status(200).json({success:true,qrCode:result.qrCode,secret:result.secret});
+      }else{
+        res.status(500).json({success:false,message:"Failed to setup two factor authentication"});
+      }
+
+    }catch(error){
+        next(error);
+    }
+ }

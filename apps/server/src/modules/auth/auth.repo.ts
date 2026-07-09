@@ -121,6 +121,7 @@ export class AuthRepository {
 }
 
 
+    
 
         async createSession(sessionData: SessionCreateInput, logger: Logger) {
             try {
@@ -357,6 +358,24 @@ export class AuthRepository {
          }catch(error){
             throw new AppError("Failed to change password for account ID: " + id, 500);
          }
+    }
+
+    async addTwoFactorSecret(email:string,secret:string,logger:Logger){
+        try{
+         const user  = await prisma.user.update({
+            where:{
+                email:email
+            },
+            data:{
+                twoFactorSecret:secret
+            }
+         })
+         logger.info("Two-factor secret added for user ID: %s", email);
+         return user ; 
+        }catch(error){
+            logger.error(error, "Error adding two-factor secret for user ID: %s", email);
+            throw error;
+        }
     }
 }
 
