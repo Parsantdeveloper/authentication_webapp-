@@ -1,6 +1,18 @@
 
 import * as OTPAuth from "otpauth";
+import Cryptr from "cryptr";
 
+const cryptr = new Cryptr(process.env.TOTP_SECRET_KEY!);
+
+
+ export function encryptSecret(secret: string): string {
+  return cryptr.encrypt(secret);
+}
+
+ export function decryptSecret(encryptedSecret: string): string {
+  return cryptr.decrypt(encryptedSecret);
+
+}
 
 export  function generateSecret(){
 const secret = new OTPAuth.Secret(); 
@@ -23,5 +35,6 @@ export function generateTOTP(email:string,secret:any){
         throw new Error("Failed to generate TOTP");
     }
 }
+
 
 

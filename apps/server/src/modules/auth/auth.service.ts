@@ -3,7 +3,7 @@ import AuthRepository from "./auth.repo.js";
 import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
 import { generateToken, generateAccessToken, generatePasswordResetToken, verifyPasswordResetToken } from "@repo/auth-utils"
 import { EmailLoginInput } from "./auth.schema.js"
-import {generateSecret,generateTOTP} from "../../libs/totp.auth.js"
+import { decryptSecret, encryptSecret, generateSecret, generateTOTP } from "../../libs/totp.auth.js"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError, AppError } from "@repo/errors";
@@ -362,22 +362,47 @@ class AuthService {
     }
 
 
-    async setupTOTP(email:string, logger:Logger){
-      const secret = generateSecret();
-      const totp = generateTOTP(email, secret);
-      const twoFactorSecret = await AuthRepository.addTwoFactorSecret(email,secret.base32,logger);
-      if(!twoFactorSecret){
-        throw new ConflictError("Failed to setup two factor authentication");
-      }
-      const url = totp.toString();
-      const qrCode = await QRCode.toDataURL(url);
-        return {qrCode, secret:secret.base32};
+    async setup2fa(email: string, logger: Logger) {
+         const user = await AuthRepository.checkUserExistsByEmail(email);
+        if (!user) {
+            throw new ConflictError("User doesnot exists");
+        }
+        if(user.twoFactorEnabled===true){
+        throw new ConflictError("Two-factor authentication is already enabled.");
+
+        }
+        const secret = generateSecret();
+        const totp = generateTOTP(email, secret);
+        const encryptedSecret = encryptSecret(secret.base32);
+        const twoFactorSecret = await AuthRepository.addTwoFactorSecret(email, encryptedSecret, logger);
+        if (!twoFactorSecret) {
+            throw new ConflictError("Failed to setup two factor authentication");
+        }
+        const url = totp.toString();
+        const qrCode = await QRCode.toDataURL(url);
+        return { qrCode };
     }
 
+    async verify2fa(input: { email: string; token: string }, logger: Logger) {
+        const encryptedSecret = await AuthRepository.getTwoFactorSecret(input.email, logger);
+        if (!encryptedSecret) {
+            throw new ConflictError("Two factor authentication is not setup for this user");
+        }
+        const twoFactorSecret = decryptSecret(encryptedSecret);
+        const totp = generateTOTP(input.email, twoFactorSecret);
+        const delta = totp.validate({
+            token: input.token,
+            window: 1,
+        });
 
+        if (delta === null) {
+            throw new ConflictError("Invalid token");
+        }
+        await AuthRepository.enableTwoFactorAuth(input.email, logger);
+        return { message: "Two factor authentication verified successfully" };
+    }
 
 }
-    
 
 
-export default new AuthService()
+export default new AuthService();

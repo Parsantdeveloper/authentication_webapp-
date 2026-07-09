@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup,  getSession,  logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken,sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth } from "./auth.controller.js";
+import { emailLogin, emailSignup, getSession, logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken, sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth, verifyTwoFactorAuth } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -392,88 +392,90 @@ router.get("/refresh-token", refreshToken);
  */
 
 
-  router.post("/logout",authMiddleware,logoutFromDevice);
-      /**
-       * @swagger
-       * /api/auth/logout:
-       *   post:
-       *     summary: Logout from current device
-       *     description: Invalidates the current session, logging the user out from the current device
-       *     tags:
-       *       - Authentication
-       *     security:
-       *       - cookieAuth: []
-       *       - bearerAuth: []
-       *     responses:
-       *       200:
-       *         description: Successfully logged out from current device
-       *         content:
-       *           application/json:
-       *             schema:
-       *               type: object
-       *               properties:
-       *                 success:
-       *                   type: boolean
-       *                   example: true
-       *                 message:
-       *                   type: string
-       *                   example: "Logged out from current device"
-       *         headers:
-       *           Set-Cookie:
-       *             schema:
-       *               type: string
-       *               example: "accessToken=; Path=/; HttpOnly; Secure; SameSite=Strict; refreshToken=; Path=/; HttpOnly; Secure; SameSite=Strict"
-       *       400:
-       *         description: Session ID is missing
-       *         content:
-       *           application/json:
-       *             schema:
-       *               type: object
-       *               properties:
-       *                 success:
-       *                   type: boolean
-       *                   example: false
-       *                 message:
-       *                   type: string
-       *                   example: "Session ID is missing"
-       *       401:
-       *         description: Unauthorized - No valid token provided
-       *       404:
-       *         description: Session not found
-       *         content:
-       *           application/json:
-       *             schema:
-       *               type: object
-       *               properties:
-       *                 success:
-       *                   type: boolean
-       *                   example: false
-       *                 message:
-       *                   type: string
-       *                   example: "Session not found" 
-       */
+router.post("/logout", authMiddleware, logoutFromDevice);
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout from current device
+ *     description: Invalidates the current session, logging the user out from the current device
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - cookieAuth: []
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully logged out from current device
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Logged out from current device"
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: "accessToken=; Path=/; HttpOnly; Secure; SameSite=Strict; refreshToken=; Path=/; HttpOnly; Secure; SameSite=Strict"
+ *       400:
+ *         description: Session ID is missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Session ID is missing"
+ *       401:
+ *         description: Unauthorized - No valid token provided
+ *       404:
+ *         description: Session not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Session not found" 
+ */
 
-      // this route is for sending the verification code to the user's email
-      router.get("/send-email-verification",authMiddleware, sendVerificationEmail);
+// this route is for sending the verification code to the user's email
+router.get("/send-email-verification", authMiddleware, sendVerificationEmail);
 
-      // this route is for verifying the email with the code sent to the user's email
-      router.post("/verify-email",authMiddleware, verifyEmail);
+// this route is for verifying the email with the code sent to the user's email
+router.post("/verify-email", authMiddleware, verifyEmail);
 
 
-      router.post("/change-password",authMiddleware,changePassword);
+router.post("/change-password", authMiddleware, changePassword);
 
-      router.post("/forgot-password",authMiddleware,sendPasswordResetEmail);
+router.post("/forgot-password", authMiddleware, sendPasswordResetEmail);
 
-      router.post("/verify-password-reset",authMiddleware,verifyPasswordResetToken);
+router.post("/verify-password-reset", authMiddleware, verifyPasswordResetToken);
 
-      router.post("/reset-password",authMiddleware,verifyPasswordResetTokenAndChangePassword);
+router.post("/reset-password", authMiddleware, verifyPasswordResetTokenAndChangePassword);
 
-      router.post("/magic-link/request",magicLinkRequest);
+router.post("/magic-link/request", magicLinkRequest);
 
-      router.get("/magic-link/verify",magicLinkLogin);
+router.get("/magic-link/verify", magicLinkLogin);
 
-      router.post("/totp/setup-totp",authMiddleware,setupTwoFactorAuth);
+router.post("/2fa/setup-totp", authMiddleware, setupTwoFactorAuth);
 
-      
+router.post("/2fa/verify-totp", authMiddleware, verifyTwoFactorAuth);
+
+
 
 export default router;

@@ -95,3 +95,7 @@ export const magicLinkSchema = baseAuthSchema.extend({
   email: z.string().email("Invalid email format"),
 })
 
+
+export const totpVerifySchema = z.object({
+  token: z.string().length(6, "TOTP token must be 6 characters"),
+})

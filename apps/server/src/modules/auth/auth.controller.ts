@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
-import { emailSignupSchema, emailLoginSchema, changePasswordInput, magicLinkSchema,baseAuthSchema } from "./auth.schema.js";
+import { emailSignupSchema, emailLoginSchema, changePasswordInput, magicLinkSchema, baseAuthSchema, totpVerifySchema } from "./auth.schema.js";
 import { logger } from "../../config/logger.js";
 import { VerifyCode } from "./auth.type.js";
 export async function emailSignup(req: Request, res: Response, next: NextFunction) {
@@ -304,19 +304,35 @@ export const magicLinkLogin = async (req: Request, res: Response, next: NextFunc
 }
 
 
- export const setupTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
+export const setupTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
 
-    try{
-      const email = req.user.email;
+    try {
+        const email = req.user.email;
 
-      const result = await AuthService.setupTOTP(email,req.log);
-      if(result){
-        res.status(200).json({success:true,qrCode:result.qrCode,secret:result.secret});
-      }else{
-        res.status(500).json({success:false,message:"Failed to setup two factor authentication"});
-      }
+        const result = await AuthService.setup2fa(email, req.log);
+        if (result) {
+            res.status(200).json({ success: true, qrCode: result.qrCode });
+        } else {
+            res.status(500).json({ success: false, message: "Failed to setup two factor authentication" });
+        }
 
-    }catch(error){
+    } catch (error) {
         next(error);
     }
- }
+}
+
+export const verifyTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {token} = totpVerifySchema.parse(req.body);
+        const input:{email:string,token:string} ={email:req.user.email,token:token}
+        const verify = await AuthService.verify2fa(input, req.log);
+        if (verify) {
+            res.status(200).json({ success: true, message: "Two factor authentication verified successfully" });
+        } else {
+            res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
+        }
+
+    } catch (error) {
+        next(error);
+    }
+}
