@@ -1,6 +1,6 @@
 
 import express from "express";
-import { emailLogin, emailSignup, getSession, logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken, sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth, verifyTwoFactorAuth, verifyTwoFactorAuthLogin } from "./auth.controller.js";
+import { emailLogin, emailSignup, getSession, logoutFromAllDevices, logoutFromDevice, changePassword, refreshToken, sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth, verifyTwoFactorAuth, verifyTwoFactorAuthLogin, disableTwoFactorAuth } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -477,5 +477,7 @@ router.post("/2fa/setup-totp", authMiddleware, setupTwoFactorAuth);
 router.post("/2fa/verify-totp", authMiddleware, verifyTwoFactorAuth);
 
 router.post("/2fa/verify-login-totp", verifyTwoFactorAuthLogin);
+
+router.post("/2fa/disable", authMiddleware, disableTwoFactorAuth);
 
 export default router;

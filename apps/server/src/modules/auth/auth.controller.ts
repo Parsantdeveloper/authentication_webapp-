@@ -345,7 +345,7 @@ export const verifyTwoFactorAuth = async (req: Request, res: Response, next: Nex
 export const verifyTwoFactorAuthLogin = async (req: Request, res: Response, next: NextFunction) => {
 
     try{
-        
+
         const {token} = totpVerifySchema.parse(req.body);
         
         const loginToken =req.body.loginToken;
@@ -376,6 +376,27 @@ export const verifyTwoFactorAuthLogin = async (req: Request, res: Response, next
         } else {
             res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
         }
+    }catch(error){
+        next(error);
+    }
+}
+
+
+export const disableTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
+
+    try{
+        const input={
+            email:req.user.email,
+            token:req.body.token
+        }
+        
+        const result = await AuthService.disable2fa(input, req.log);
+        if (result) {
+            res.status(200).json({ success: true, message: "Two factor authentication disabled successfully" });
+        } else {
+            res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
+        }
+         
     }catch(error){
         next(error);
     }

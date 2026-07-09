@@ -422,6 +422,25 @@ export class AuthRepository {
         }
 
     }
+
+    async disableTwoFactorAuth(email: string, logger: Logger) {
+        try {
+            const user = await prisma.user.update({
+                where: {
+                    email: email
+                },
+                data: {
+                    twoFactorEnabled: false,
+                    twoFactorSecret: null
+                }
+            })
+            logger.info("Two-factor authentication disabled for user ID: %s", email);
+            return user;
+        } catch (error) {
+            logger.error(error, "Error disabling two-factor authentication for user ID: %s", email);
+            throw error;
+        }
+    }
 }
 
 export default new AuthRepository();

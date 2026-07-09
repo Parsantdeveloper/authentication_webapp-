@@ -439,6 +439,29 @@ class AuthService {
        
     }
 
+    async disable2fa(input:{email:string,token:string},logger:Logger){
+        const user = await AuthRepository.checkUserExistsByEmail(input.email);
+        if (!user) {
+            throw new ConflictError("User doesnot exists");
+        }
+        if(user.twoFactorEnabled===false){
+            throw new ConflictError("Two-factor authentication is not enabled.");
+        }
+        const twoFactorSecret =decryptSecret(user.twoFactorSecret??"");
+        const totp = generateTOTP(input.email, twoFactorSecret);
+        const delta = totp.validate({
+            token: input.token,
+            window: 1,
+        });
+        
+        if (delta === null) {
+            throw new ConflictError("Invalid token");
+        }
+        await AuthRepository.disableTwoFactorAuth(input.email, logger);
+        return { message: "Two factor authentication disabled successfully" };
+    }
+
+    
 }
 
 
