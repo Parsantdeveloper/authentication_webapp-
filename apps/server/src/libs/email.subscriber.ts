@@ -22,7 +22,7 @@ export type EmailJobData =
    }
 
 const emailQueue = new Queue<EmailJobData>("email", {
-  connection: redis,
+  connection: redis as any,
   defaultJobOptions: {
     attempts: 3,
     backoff: {

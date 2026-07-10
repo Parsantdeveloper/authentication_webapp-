@@ -10,6 +10,13 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
+  
+  "pnpm": {
+    "overrides": {
+      "ioredis": "5.10.1"
+    }
+  },
+
   "dependencies": {
     "@repo/auth-utils": "workspace:*",
     "@repo/config": "workspace:*",

@@ -4,7 +4,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client.js'
 import { SessionCreateInput } from "./auth.schema.js";
 import { EmailAlreadyExistsError } from "@repo/errors";
 import { VerificationInput } from "./auth.type.js";
-import { logger, type Logger } from "../../config/logger.js";
+import {  type Logger } from "../../config/logger.js";
 import { VerificationType } from "../../generated/prisma/browser.js";
 import { AppError } from "@repo/errors";
 

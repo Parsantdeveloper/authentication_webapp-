@@ -6,7 +6,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": false
   },
 
   "include": ["src"]
