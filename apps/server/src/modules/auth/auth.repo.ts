@@ -7,7 +7,6 @@ import { VerificationInput } from "./auth.type.js";
 import { logger, type Logger } from "../../config/logger.js";
 import { VerificationType } from "../../generated/prisma/browser.js";
 import { AppError } from "@repo/errors";
-import email from "../../config/email.js";
 
 interface CreateUserData {
     email: string;

@@ -329,6 +329,7 @@ class AuthService {
     }
 
     async magicLinkLogin(token: string, sessionInput: SessionInput, logger: Logger) {
+
         const tokenHash = hashToken(token);
         const verification = await AuthRepository.getVerificationByHashedToken(tokenHash, "MAGIC_LINK", logger);
         if (!verification) {
@@ -360,10 +361,17 @@ class AuthService {
             // fall straight through to issuing a session below.
         }
 
-        await AuthRepository.markVerificationAsUsed(verification.id, logger);
+      await AuthRepository.markVerificationAsUsed(verification.id, logger);
 
-        let { session, accessToken, refreshToken } = await this.createSession(user, sessionInput, logger);
+
+        if(!user.twoFactorEnabled){
+         let { session, accessToken, refreshToken } = await this.createSession(user, sessionInput, logger);
         return ({ session, accessToken, refreshToken });
+        }
+
+      const loginToken = generateLoginToken({ userId: user.id, type: "2fa_login" });
+        return { requiresTwoFactor: true, loginToken , message: "Two-factor authentication is enabled. Please verify the 2FA token."};
+       
     }
 
 
@@ -460,6 +468,8 @@ class AuthService {
         await AuthRepository.disableTwoFactorAuth(input.email, logger);
         return { message: "Two factor authentication disabled successfully" };
     }
+
+
 
     
 }

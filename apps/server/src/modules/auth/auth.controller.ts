@@ -289,7 +289,7 @@ export const magicLinkLogin = async (req: Request, res: Response, next: NextFunc
             sameSite: "strict" as const,
         };
         const tokens = await AuthService.magicLinkLogin(token, input, req.log);
-        if (tokens) {
+        if (tokens.requiresTwoFactor===false) {
             res
                 .status(201)
                 .cookie("accessToken", tokens.accessToken, {
@@ -302,7 +302,12 @@ export const magicLinkLogin = async (req: Request, res: Response, next: NextFunc
                     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
                 })
                 .json({ success: true, session: tokens.session, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
-        }
+        }else{
+             res.status(200)
+            .json({ success: true, requiresTwoFactor: true, loginToken: tokens.loginToken, message: "Two-factor authentication is enabled. Please verify the 2FA token." });
+           } 
+        
+        
     } catch (error) {
         next(error);
     }
