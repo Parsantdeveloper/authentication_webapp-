@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { errorHandler } from "./middlewares/error_middleware.js";
 import { requestLoggerMiddleware } from "./middlewares/request_logger_middleware.js";
 import authRouter from "./modules/auth/auth.route.js";
+import sessionRouter from "./modules/session/session.route.js";
 import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.js";
@@ -32,6 +33,7 @@ if(process.env.NODE_ENV==="development"){
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 }
 app.use("/api/auth", authRouter);
+app.use("/api/session", sessionRouter);
 
  app.get("/",(req,res)=>{
   res.send("Welcome to the API server!")
