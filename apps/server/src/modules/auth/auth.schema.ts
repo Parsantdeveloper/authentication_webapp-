@@ -68,7 +68,7 @@ export const phoneSignupSchema = baseAuthSchema.extend({
   name: z.string().min(2).max(150)
 
 })
-
+  
 export const emailLoginSchema = baseAuthSchema.extend({
   email: z.string().email(),
   password: z.string().min(8).max(128)

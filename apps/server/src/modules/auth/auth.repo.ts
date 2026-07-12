@@ -175,7 +175,13 @@ export class AuthRepository {
         })
     }
 
- 
+   async getUserById(userId: string) {
+        return await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+    }
 
 
 

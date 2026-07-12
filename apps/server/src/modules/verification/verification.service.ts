@@ -3,8 +3,7 @@ import AuthRepository from "../auth/auth.repo.js";
 import SessionService from "../session/session.service.js";
 import VerificationRepository from "./verification.repo.js";
 import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
-import { generateToken, generatePasswordResetToken, verifyPasswordResetToken ,generateLoginToken,verifyLoginToken } from "@repo/auth-utils"
-import { decryptSecret, encryptSecret, generateSecret, generateTOTP } from "../../libs/totp.auth.js"
+import { generateToken, generatePasswordResetToken, verifyPasswordResetToken ,generateLoginToken,verifyLoginToken,decryptSecret, encryptSecret, generateSecret, generateTOTP  } from "@repo/auth-utils"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError, AppError } from "@repo/errors";
@@ -89,7 +88,7 @@ class AuthService {
 
         let newHashedPassword = await hashSecret(input.new_password);
         try {
-            await AuthRepository.changePassword(account.id, newHashedPassword);
+            await VerificationRepository.changePassword(account.id, newHashedPassword);
             return { message: "Password changed successfully" };
         } catch (error) {
             throw new ConflictError("Failed to change password");

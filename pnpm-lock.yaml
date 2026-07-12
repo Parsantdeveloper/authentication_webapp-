@@ -230,9 +230,15 @@ importers:
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
+      cryptr:
+        specifier: ^6.4.0
+        version: 6.4.0
       jsonwebtoken:
         specifier: ^9.0.3
         version: 9.0.3
+      otpauth:
+        specifier: ^9.5.1
+        version: 9.5.1
     devDependencies:
       '@types/bcrypt':
         specifier: ^6.0.0
