@@ -24,3 +24,9 @@ export interface changePasswordTypes{
    user_id:string
 }
 
+export interface SessionInput {
+    device?: string;
+    location?: string;
+    user_agent?: string;
+    ipAddress?: string;
+}

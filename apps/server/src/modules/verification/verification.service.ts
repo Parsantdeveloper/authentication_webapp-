@@ -7,26 +7,14 @@ import { generateToken, generatePasswordResetToken, verifyPasswordResetToken ,ge
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError, AppError } from "@repo/errors";
-import { VerifyCode, changePasswordTypes } from "./verification.type.js";
+import { VerifyCode, changePasswordTypes , SessionInput } from "./verification.type.js";
 import QRCode from "qrcode";
 
 
 
 
-
-
-interface SessionInput {
-    device?: string;
-    location?: string;
-    user_agent?: string;
-    ipAddress?: string;
-}
-
-
 class AuthService {
 
-
-  
 
     async sendEmailVerification(email: string, logger: Logger) {
         const code = generateOTP(6);
