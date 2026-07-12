@@ -203,10 +203,10 @@ export const setupTwoFactorAuth = async (req: Request, res: Response, next: Next
 export const verifyTwoFactorAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const {token} = totpVerifySchema.parse(req.body);
-        const input:{email:string,token:string} ={email:req.user.email,token:token}
+        const input:{userId:string,email:string,token:string} ={userId:req.user.id,email:req.user.email,token:token}
         const verify = await VerificationService.verify2fa(input, req.log);
         if (verify) {
-            res.status(200).json({ success: true, message: "Two factor authentication verified successfully" });
+            res.status(200).json({ success: true, message:verify.message, recoveryCodes: verify.recoveryCodes });
         } else {
             res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
         }
@@ -271,6 +271,44 @@ export const disableTwoFactorAuth = async (req: Request, res: Response, next: Ne
             res.status(401).json({ success: false, message: "Invalid two factor authentication token" });
         }
          
+    }catch(error){
+        next(error);
+    }
+}
+
+
+
+export const recoveryCodeLogin = async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const input ={
+            code:req.body.code,
+            loginToken:req.body.loginToken
+        }
+        const sessionInput = baseAuthSchema.parse({
+            ...req.body,
+        });
+        
+        const tokens = await VerificationService.recoveryCodeLogin(input, sessionInput, req.log);
+        if (tokens) {
+           res
+            .status(201)
+            .cookie("accessToken", tokens.accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict" as const,
+                maxAge: 15 * 60 * 1000,
+            })
+            .cookie("refreshToken", tokens.refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict" as const,
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            })
+            .json({ success: true, session: tokens.session, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
+          
+        } else {
+            res.status(401).json({ success: false, message: "Invalid recovery code" });
+        }
     }catch(error){
         next(error);
     }

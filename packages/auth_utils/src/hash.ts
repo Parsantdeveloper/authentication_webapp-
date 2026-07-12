@@ -30,6 +30,20 @@ export const compareSecret = async (secret: string, hash: string): Promise<boole
   }
 };
 
+export const generateRecoveryCode = (): string => {
+  return crypto
+    .randomBytes(5)
+    .toString("hex")
+    .toUpperCase();
+};
+
+
+export const hashRecoveryCode = (code: string): string => {
+  return crypto
+    .createHash("sha256")
+    .update(code)
+    .digest("hex");
+};
 /**
  * Deterministic hash for bearer tokens (refresh tokens, magic link tokens).
  *

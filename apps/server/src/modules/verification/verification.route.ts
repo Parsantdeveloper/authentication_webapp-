@@ -1,6 +1,6 @@
 
 import express from "express";
-import {  changePassword, sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth, verifyTwoFactorAuth, verifyTwoFactorAuthLogin, disableTwoFactorAuth } from "./verification.controller.js";
+import {  changePassword, sendVerificationEmail, verifyEmail, sendPasswordResetEmail, verifyPasswordResetToken, verifyPasswordResetTokenAndChangePassword, magicLinkRequest, magicLinkLogin, setupTwoFactorAuth, verifyTwoFactorAuth, verifyTwoFactorAuthLogin, disableTwoFactorAuth, recoveryCodeLogin } from "./verification.controller.js";
 import { authMiddleware } from "../../middlewares/authenticate.js";
 
 const router = express.Router();
@@ -32,5 +32,7 @@ router.post("/2fa/verify-totp", authMiddleware, verifyTwoFactorAuth);
 router.post("/2fa/verify-login-totp", verifyTwoFactorAuthLogin);
 
 router.post("/2fa/disable", authMiddleware, disableTwoFactorAuth);
+
+router.post("/recovery-code-login",recoveryCodeLogin );
 
 export default router;

@@ -164,7 +164,7 @@ export type RecoveryCodeGroupByOutputType = {
   userId: string
   code: string
   used: boolean
-  expiresAt: Date
+  expiresAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: RecoveryCodeCountAggregateOutputType | null
@@ -195,7 +195,7 @@ export type RecoveryCodeWhereInput = {
   userId?: Prisma.StringFilter<"RecoveryCode"> | string
   code?: Prisma.StringFilter<"RecoveryCode"> | string
   used?: Prisma.BoolFilter<"RecoveryCode"> | boolean
-  expiresAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
+  expiresAt?: Prisma.DateTimeNullableFilter<"RecoveryCode"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
   User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -206,7 +206,7 @@ export type RecoveryCodeOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   used?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   User?: Prisma.UserOrderByWithRelationInput
@@ -220,7 +220,7 @@ export type RecoveryCodeWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"RecoveryCode"> | string
   code?: Prisma.StringFilter<"RecoveryCode"> | string
   used?: Prisma.BoolFilter<"RecoveryCode"> | boolean
-  expiresAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
+  expiresAt?: Prisma.DateTimeNullableFilter<"RecoveryCode"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
   User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -231,7 +231,7 @@ export type RecoveryCodeOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   code?: Prisma.SortOrder
   used?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RecoveryCodeCountOrderByAggregateInput
@@ -247,7 +247,7 @@ export type RecoveryCodeScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"RecoveryCode"> | string
   code?: Prisma.StringWithAggregatesFilter<"RecoveryCode"> | string
   used?: Prisma.BoolWithAggregatesFilter<"RecoveryCode"> | boolean
-  expiresAt?: Prisma.DateTimeWithAggregatesFilter<"RecoveryCode"> | Date | string
+  expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"RecoveryCode"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RecoveryCode"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RecoveryCode"> | Date | string
 }
@@ -256,7 +256,7 @@ export type RecoveryCodeCreateInput = {
   id?: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   User: Prisma.UserCreateNestedOneWithoutRecoveryCodeInput
@@ -267,7 +267,7 @@ export type RecoveryCodeUncheckedCreateInput = {
   userId: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -276,7 +276,7 @@ export type RecoveryCodeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   User?: Prisma.UserUpdateOneRequiredWithoutRecoveryCodeNestedInput
@@ -287,7 +287,7 @@ export type RecoveryCodeUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -297,7 +297,7 @@ export type RecoveryCodeCreateManyInput = {
   userId: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -306,7 +306,7 @@ export type RecoveryCodeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -316,7 +316,7 @@ export type RecoveryCodeUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -407,7 +407,7 @@ export type RecoveryCodeCreateWithoutUserInput = {
   id?: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -416,7 +416,7 @@ export type RecoveryCodeUncheckedCreateWithoutUserInput = {
   id?: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -455,7 +455,7 @@ export type RecoveryCodeScalarWhereInput = {
   userId?: Prisma.StringFilter<"RecoveryCode"> | string
   code?: Prisma.StringFilter<"RecoveryCode"> | string
   used?: Prisma.BoolFilter<"RecoveryCode"> | boolean
-  expiresAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
+  expiresAt?: Prisma.DateTimeNullableFilter<"RecoveryCode"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RecoveryCode"> | Date | string
 }
@@ -464,7 +464,7 @@ export type RecoveryCodeCreateManyUserInput = {
   id?: string
   code: string
   used?: boolean
-  expiresAt: Date | string
+  expiresAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -473,7 +473,7 @@ export type RecoveryCodeUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -482,7 +482,7 @@ export type RecoveryCodeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -491,7 +491,7 @@ export type RecoveryCodeUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   used?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -562,7 +562,7 @@ export type $RecoveryCodePayload<ExtArgs extends runtime.Types.Extensions.Intern
     userId: string
     code: string
     used: boolean
-    expiresAt: Date
+    expiresAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["recoveryCode"]>

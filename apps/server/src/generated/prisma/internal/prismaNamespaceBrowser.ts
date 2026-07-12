@@ -52,9 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Verification: 'Verification',
   Account: 'Account',
   Session: 'Session',
+  Verification: 'Verification',
   RecoveryCode: 'RecoveryCode',
   TrustedDevice: 'TrustedDevice'
 } as const
@@ -91,21 +91,6 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const VerificationScalarFieldEnum = {
-  id: 'id',
-  identifier: 'identifier',
-  tokenHash: 'tokenHash',
-  type: 'type',
-  attempts: 'attempts',
-  usedAt: 'usedAt',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
-
-
 export const AccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -139,6 +124,21 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  tokenHash: 'tokenHash',
+  type: 'type',
+  attempts: 'attempts',
+  usedAt: 'usedAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
 export const RecoveryCodeScalarFieldEnum = {

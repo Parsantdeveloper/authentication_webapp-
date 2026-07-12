@@ -211,6 +211,62 @@ export class VerificationRepository {
             throw error;
         }
     }
+
+    async addRecoveryCodes(userId:string,hashedRecoveryCodes:string[],logger:Logger){
+        try {
+            const recoveryCodes = await prisma.recoveryCode.createMany({
+                data: hashedRecoveryCodes.map(code => ({
+                    userId: userId,
+                    code,
+                }))
+            })
+            logger.info("Recovery codes added for user ID: %s", userId);
+            return recoveryCodes;
+        } catch (error) {
+            logger.error(error, "Error adding recovery codes for user ID: %s", userId);
+            throw error;
+        }
+    }
+
+    async deleteRecoveryCodes(userId:string,logger:Logger){
+        try {
+            const recoveryCodes = await prisma.recoveryCode.deleteMany({
+                where: {
+                    userId: userId
+                }
+            })
+            logger.info("Recovery codes deleted for user ID: %s", userId);
+            return recoveryCodes;
+        } catch (error) {
+            logger.error(error, "Error deleting recovery codes for user ID: %s", userId);
+            throw error;
+        }
+    }
+
+    async getRecoveryCode(hashedCode:string,userId:string,logger:Logger){
+        try {
+            const recoveryCode = await prisma.recoveryCode.findFirst({
+                where: {
+                    code: hashedCode,
+                    userId: userId,
+                    used: false,
+                  
+                }
+            })
+            console.log("Recovery code retrieved for hashed code: %s", recoveryCode);
+            if (!recoveryCode) {
+                logger.warn("No recovery code found for hashed code: %s", hashedCode);
+            } else {
+                logger.info("Recovery code retrieved for hashed code: %s", hashedCode);
+            }
+            return recoveryCode;
+        } catch (error) {
+            logger.error(error, "Error retrieving recovery code for hashed code: %s", hashedCode);
+            throw error;
+        }
+    }
+
+
 }
 
 export default new VerificationRepository();

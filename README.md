@@ -85,5 +85,14 @@ DELETE /sessions
 
 THINGS TO ADD 
 Implement redis for rate limiting . 
+for 2fa verification for disabling .
 
- for 2fa verification for disabling .
+
+
+ "recoveryCodes": [
+    "4B3B7EEE44",
+    "1155CD218D",
+    "22A33C8B19",
+    "4270F1348F",
+    "EF55F08EC8"
+  ]

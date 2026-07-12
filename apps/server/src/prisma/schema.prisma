@@ -91,7 +91,7 @@ model RecoveryCode{
   userId String 
   code String 
   used Boolean @default(false)
-  expiresAt DateTime @db.Timestamptz(6)
+  expiresAt DateTime? @db.Timestamptz(6)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
 

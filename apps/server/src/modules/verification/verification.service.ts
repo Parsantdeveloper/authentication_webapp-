@@ -2,8 +2,8 @@
 import AuthRepository from "../auth/auth.repo.js";
 import SessionService from "../session/session.service.js";
 import VerificationRepository from "./verification.repo.js";
-import { hashSecret, hashToken, compareSecret, generateOTP } from "@repo/auth-utils"
-import { generateToken, generatePasswordResetToken, verifyPasswordResetToken ,generateLoginToken,verifyLoginToken,decryptSecret, encryptSecret, generateSecret, generateTOTP  } from "@repo/auth-utils"
+import { hashSecret, hashToken, compareSecret,generateRecoveryCode, generateOTP } from "@repo/auth-utils"
+import { generateToken, generatePasswordResetToken, verifyPasswordResetToken,hashRecoveryCode ,generateLoginToken,verifyLoginToken,decryptSecret, encryptSecret, generateSecret, generateTOTP  } from "@repo/auth-utils"
 import emailQueue from "../../libs/email.subscriber.js"
 import type { Logger } from "../../config/logger.js";
 import { ConflictError, AppError } from "@repo/errors";
@@ -260,7 +260,7 @@ class AuthService {
 
 
 
-    async verify2fa(input: { email: string; token: string }, logger: Logger) {
+    async verify2fa(input: { userId: string; email: string; token: string }, logger: Logger) {
         const encryptedSecret = await VerificationRepository.getTwoFactorSecret(input.email, logger);
         if (!encryptedSecret) {
             throw new ConflictError("Two factor authentication is not setup for this user");
@@ -276,17 +276,29 @@ class AuthService {
             throw new ConflictError("Invalid token");
         }
         await VerificationRepository.enableTwoFactorAuth(input.email, logger);
-        return { message: "Two factor authentication verified successfully" };
+        // deleting any existing recovery codes for the user before generating new ones
+        await VerificationRepository.deleteRecoveryCodes(input.email, logger);
+        // now generating 5 revovery codes and storing them in the database 5 rows . 
+        let recoveryCodes = [];
+        let hashedRecoveryCodes = [];
+        for(let i=0;i<5;i++){
+            const recoveryCode = generateRecoveryCode();
+            const hashedRecoveryCode = await hashRecoveryCode(recoveryCode);
+            recoveryCodes.push(recoveryCode);
+            hashedRecoveryCodes.push(hashedRecoveryCode);
+        } 
+        
+        await VerificationRepository.addRecoveryCodes(input.userId, hashedRecoveryCodes, logger);
+        return { message: "Two factor authentication verified successfully" , recoveryCodes: recoveryCodes};
     }
+
 
     async verify2faLogin(input:{loginToken:string,token:string},sessionInput:SessionInput,logger:Logger){
 
-        console.log("req comming in service")
          const payload = verifyLoginToken(input.loginToken);
          if(!payload || payload.type!=="2fa_login"){
             throw new ConflictError("Invalid or expired login token");
          }
-         console.log("payload",payload)
          const user = await AuthRepository.getUserById(payload.userId);
          console.log("user",user)
          if (!user) {
@@ -329,6 +341,41 @@ class AuthService {
         }
         await VerificationRepository.disableTwoFactorAuth(input.email, logger);
         return { message: "Two factor authentication disabled successfully" };
+    }
+
+
+
+    async recoveryCodeLogin(input:{code:string,loginToken:string,},sessionInput:SessionInput,logger:Logger){
+
+         const hashedCode =  hashRecoveryCode(input.code);
+         const payload = verifyLoginToken(input.loginToken);
+         if(!payload || payload.type!=="2fa_login"){
+            throw new ConflictError("Invalid or expired login token");
+         }
+         
+
+         const recoveryCode = await VerificationRepository.getRecoveryCode(hashedCode, payload.userId, logger);
+
+         if(recoveryCode?.used){
+            throw new ConflictError("Recovery code has already been used");
+         }
+         if(!recoveryCode){
+            throw new ConflictError("Invalid recovery code");
+         }
+          const user = await AuthRepository.getUserById(payload.userId);
+         console.log("user",user)
+         if (!user) {
+            throw new ConflictError("User not found");
+         }
+         await VerificationRepository.deleteRecoveryCodes(payload.userId, logger);
+         await VerificationRepository.disableTwoFactorAuth(user.email, logger);
+        
+        
+        
+        
+       let { session, accessToken, refreshToken } = await SessionService.createSession(user, sessionInput, logger);
+            return ({requiresTwoFactor: false, session, accessToken, refreshToken });
+       
     }
 
 

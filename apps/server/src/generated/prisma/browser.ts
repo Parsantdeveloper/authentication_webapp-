@@ -23,11 +23,6 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
- * Model Verification
- * 
- */
-export type Verification = Prisma.VerificationModel
-/**
  * Model Account
  * 
  */
@@ -37,6 +32,11 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model Verification
+ * 
+ */
+export type Verification = Prisma.VerificationModel
 /**
  * Model RecoveryCode
  * 
